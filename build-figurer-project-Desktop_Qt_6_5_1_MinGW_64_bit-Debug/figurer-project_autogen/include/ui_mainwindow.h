@@ -14,9 +14,9 @@
 #include <QtWidgets/QGraphicsView>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenuBar>
-#include <QtWidgets/QPlainTextEdit>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QWidget>
+#include "codeeditor.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -25,7 +25,7 @@ class Ui_MainWindow
 public:
     QWidget *centralwidget;
     QGraphicsView *graphicsView;
-    QPlainTextEdit *plainTextEdit;
+    CodeEditor *textEditTest;
     QMenuBar *menubar;
     QStatusBar *statusbar;
 
@@ -39,10 +39,13 @@ public:
         graphicsView = new QGraphicsView(centralwidget);
         graphicsView->setObjectName("graphicsView");
         graphicsView->setEnabled(true);
-        graphicsView->setGeometry(QRect(560, 10, 441, 551));
-        plainTextEdit = new QPlainTextEdit(centralwidget);
-        plainTextEdit->setObjectName("plainTextEdit");
-        plainTextEdit->setGeometry(QRect(43, 39, 441, 541));
+        graphicsView->setGeometry(QRect(550, 40, 441, 551));
+        textEditTest = new CodeEditor(centralwidget);
+        textEditTest->setObjectName("textEditTest");
+        textEditTest->setGeometry(QRect(50, 50, 421, 521));
+        textEditTest->setAutoFillBackground(false);
+        textEditTest->setAcceptRichText(false);
+        textEditTest->setTextInteractionFlags(Qt::LinksAccessibleByMouse|Qt::TextEditable|Qt::TextEditorInteraction|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse);
         MainWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MainWindow);
         menubar->setObjectName("menubar");
@@ -59,7 +62,7 @@ public:
 
     void retranslateUi(QMainWindow *MainWindow)
     {
-        MainWindow->setWindowTitle(QCoreApplication::translate("MainWindow", "Figurer", nullptr));
+        MainWindow->setWindowTitle(QCoreApplication::translate("MainWindow", "0", nullptr));
     } // retranslateUi
 
 };

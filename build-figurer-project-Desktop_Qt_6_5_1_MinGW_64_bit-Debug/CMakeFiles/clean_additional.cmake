@@ -5,6 +5,9 @@ if("${CONFIG}" STREQUAL "" OR "${CONFIG}" STREQUAL "Debug")
   file(REMOVE_RECURSE
   "CMakeFiles\\figurer-project_autogen.dir\\AutogenUsed.txt"
   "CMakeFiles\\figurer-project_autogen.dir\\ParseCache.txt"
+  "QCodeEditor\\CMakeFiles\\QCodeEditor_autogen.dir\\AutogenUsed.txt"
+  "QCodeEditor\\CMakeFiles\\QCodeEditor_autogen.dir\\ParseCache.txt"
+  "QCodeEditor\\QCodeEditor_autogen"
   "figurer-project_autogen"
   )
 endif()

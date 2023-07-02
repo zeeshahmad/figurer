@@ -1,0 +1,3 @@
+[submodule "figurer-project/QCodeEditor"]
+	path = figurer-project/QCodeEditor
+	url = https://github.com/zeeshahmad/QCodeEditor

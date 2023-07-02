@@ -17,12 +17,22 @@ set(PROJECT_SOURCES
         mainwindow.cpp
         mainwindow.h
         mainwindow.ui
+        pythonhighlighter.cpp
+        pythonhighlighter.h
+        codeeditor.cpp
+        codeeditor.h
 )
+
+add_subdirectory(QCodeEditor)
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(figurer-project
         MANUAL_FINALIZATION
+        resources/resources.qrc
         ${PROJECT_SOURCES}
+    )
+    target_include_directories(figurer-project
+        PRIVATE ${PROJECT_SOURCE_DIR}
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET figurer-project APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
@@ -42,7 +52,7 @@ else()
     endif()
 endif()
 
-target_link_libraries(figurer-project PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(figurer-project PRIVATE Qt${QT_VERSION_MAJOR}::Widgets QCodeEditor)
 
 set_target_properties(figurer-project PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
