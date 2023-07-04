@@ -1,7 +1,12 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "codeeditor.h"
+//#include "pythonhighlighter.h"
 #include <QMainWindow>
+#include <QTextEdit>
+#include <QFile>
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -17,5 +22,10 @@ public:
 
 private:
     Ui::MainWindow *ui;
+
+
+    CodeEditor* codeEditor;
+
+
 };
 #endif // MAINWINDOW_H
