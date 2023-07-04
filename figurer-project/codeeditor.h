@@ -16,7 +16,7 @@ class CodeEditor : public QCodeEditor
 public:
     CodeEditor(QWidget *parent = 0);
 
-private slots:
+private Q_SLOTS:
     void onTextChanged();
 
 private:

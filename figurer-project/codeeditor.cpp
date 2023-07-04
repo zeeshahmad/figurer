@@ -1,6 +1,17 @@
 #include "codeeditor.h"
 #include <QDebug>
 
+#include <Python.h>
+
+
+#include <string>
+#include <iostream>
+#include <stdio.h>
+#include <nlohmann/json.hpp>
+#include <sstream>
+#include <vector>
+
+
 CodeEditor::CodeEditor(QWidget *parent): QCodeEditor(parent)
 {
     qInfo("constructor!");
@@ -17,11 +28,38 @@ CodeEditor::CodeEditor(QWidget *parent): QCodeEditor(parent)
     font.setPointSize(10);
 
     connect(this, SIGNAL(textChanged()),this, SLOT(onTextChanged()));
+
+    Py_Initialize();
+    PyRun_SimpleString("counter=0");
+    //Py_Finalize();
+
 }
 
 void CodeEditor::onTextChanged()
 {
-    qInfo("works!");
+    qInfo("text changed!");
+    std::vector<std::string> code = {
+        "print('counter')\r\n",
+        "counter = 1\r\n"
+    };
+
+    std::stringstream codestream;
+    std::string py_command_begin = "";
+    std::string py_command_end = "";
+
+    codestream << py_command_begin;
+    for (std::string& codeline : code) {
+        codestream << codeline;
+    }
+    codestream << py_command_end;
+    std::cout << codestream.str() << std::endl;
+    std::string codestring = codestream.str();
+    const char* codechar = codestring.c_str();
+
+
+Py_Initialize();
+    PyRun_SimpleString(codechar);
+Py_Finalize();
 }
 
 void CodeEditor::initData()
@@ -35,6 +73,8 @@ void CodeEditor::initData()
 
     // Loading styles
     loadStyle(":/styles/drakula.xml");
+    //somethings changed
+    qInfo("something changed");
 }
 
 //QString CodeEditor::loadCode(QString path)
