@@ -1,0 +1,9 @@
+- fill in a python for main plot situations (pre plot template) (example plot) (post plot template)
+
+- write python for listing extracting all figures (\includegraphics) and relevant fileinfo etc. Use TexSoup library, and try to include it locally in project rather than requiring install via pip
+https://stackoverflow.com/questions/9059699/use-a-library-locally-instead-of-installing-it
+
+- think about how to temporarily reduce data resolution for quick plot modifications
+
+- write cpp mechanism to replot on type, with cooldown feature, and terminate already running python
+
