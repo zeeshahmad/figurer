@@ -17,6 +17,9 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 #https://cmake.org/cmake/help/latest/module/FindPython3.html
 find_package (Python COMPONENTS Interpreter Development)
 
+file(COPY ${PROJECT_SOURCE_DIR}/texsoup DESTINATION python)
+
+
 include(CMakePrintHelpers)
 cmake_print_variables(PROJECT_SOURCE_DIR)
 

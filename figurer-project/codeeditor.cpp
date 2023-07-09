@@ -1,5 +1,7 @@
 #include "codeeditor.h"
 #include <QDebug>
+#include <QFileInfo>
+#include <QDir>
 
 #include <Python.h>
 
@@ -22,25 +24,28 @@ CodeEditor::CodeEditor(QWidget *parent): QCodeEditor(parent)
     this->setCompleter  (completer);
     this->setHighlighter(highlighter);
 
-    QFont font;
-    font.setFamily("Courier");
-    font.setFixedPitch(true);
-    font.setPointSize(10);
+//    QFont font;
+//    font.setFamily("Courier");
+//    font.setFixedPitch(true);
+//    font.setPointSize(10);
 
     connect(this, SIGNAL(textChanged()),this, SLOT(onTextChanged()));
 
     Py_Initialize();
     PyRun_SimpleString("counter=0");
-    //Py_Finalize();
-
+    Py_Finalize();
 }
 
 void CodeEditor::onTextChanged()
 {
     qInfo("text changed!");
     std::vector<std::string> code = {
-        "print('counter')\r\n",
-        "counter = 1\r\n"
+        "import sys\r\n",
+        "sys.path.append('",QDir::currentPath().toStdString(),"\\python\\\\texsoup')\r\n",
+        "print(sys.path)\r\n",
+        "import TexSoup\r\n",
+        "soup = TexSoup.TexSoup('\\begin{document}\\section{Hello.}\\end{document}')\r\n",
+        "print(soup.section.string)"
     };
 
     std::stringstream codestream;
@@ -52,14 +57,15 @@ void CodeEditor::onTextChanged()
         codestream << codeline;
     }
     codestream << py_command_end;
-    std::cout << codestream.str() << std::endl;
+//    std::cout << codestream.str() << std::endl;
+    std::cout << QDir::currentPath().toStdString() << std::endl;
     std::string codestring = codestream.str();
     const char* codechar = codestring.c_str();
 
 
-Py_Initialize();
+    Py_Initialize();
     PyRun_SimpleString(codechar);
-Py_Finalize();
+    Py_Finalize();
 }
 
 void CodeEditor::initData()
