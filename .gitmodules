@@ -7,3 +7,6 @@
 [submodule "figurer-project/texsoup"]
 	path = figurer-project/texsoup
 	url = https://github.com/alvinwan/texsoup
+[submodule "figurer-project/pybind11"]
+	path = figurer-project/pybind11
+	url = https://github.com/pybind/pybind11

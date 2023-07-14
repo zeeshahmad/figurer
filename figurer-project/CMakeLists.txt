@@ -15,9 +15,10 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
 #https://stackoverflow.com/questions/11041299/python-h-no-such-file-or-directory
 #https://cmake.org/cmake/help/latest/module/FindPython3.html
-find_package (Python COMPONENTS Interpreter Development)
+#find_package (Python COMPONENTS Interpreter Development)
 
 file(COPY ${PROJECT_SOURCE_DIR}/texsoup DESTINATION python)
+#file(COPY ${PROJECT_SOURCE_DIR}/pybind11/pybind11 DESTINATION python/pybind11)
 
 
 include(CMakePrintHelpers)
@@ -25,17 +26,17 @@ cmake_print_variables(PROJECT_SOURCE_DIR)
 
 set(PROJECT_SOURCES
         main.cpp
-        mainwindow.cpp
-        mainwindow.h
+        mainwindow.cpp mainwindow.h
         mainwindow.ui
-        pythonhighlighter.cpp
-        pythonhighlighter.h
-        codeeditor.cpp
-        codeeditor.h
+        codeeditor.cpp codeeditor.h
+        figureview.h figureview.cpp
+        statuswidget.h statuswidget.cpp
+        pythonworker.h pythonworker.cpp
 )
 
 add_subdirectory(QCodeEditor)
 add_subdirectory(json)
+add_subdirectory(pybind11)
 
 #add_subdirectory(boost)
 
@@ -50,7 +51,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     )
     target_include_directories(figurer-project
         PRIVATE ${PROJECT_SOURCE_DIR}
-        PUBLIC ${Python_INCLUDE_DIRS}
+#        PUBLIC ${Python_INCLUDE_DIRS}
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET figurer-project APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
@@ -75,7 +76,8 @@ target_link_libraries(figurer-project PRIVATE Qt${QT_VERSION_MAJOR}::Widgets
     nlohmann_json::nlohmann_json
     #Boost::process
     #wsock32
-    ${Python_LIBRARIES})
+#    ${Python_LIBRARIES}
+    pybind11::embed)
 
 set_target_properties(figurer-project PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
@@ -83,6 +85,7 @@ set_target_properties(figurer-project PROPERTIES
     MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
     MACOSX_BUNDLE TRUE
     WIN32_EXECUTABLE TRUE
+    CXX_VISIBILITY_PRESET hidden # for pybind warning e.g. when py::dict a field of pythonworker
 )
 
 install(TARGETS figurer-project

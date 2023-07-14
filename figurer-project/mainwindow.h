@@ -1,12 +1,14 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "codeeditor.h"
-//#include "pythonhighlighter.h"
+
 #include <QMainWindow>
 #include <QTextEdit>
 #include <QFile>
 
+#include "codeeditor.h"
+#include "pythonworker.h"
+#include "statuswidget.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -19,13 +21,18 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-
-private:
     Ui::MainWindow *ui;
 
+Q_SIGNALS:
+
+private Q_SLOTS:
+    void handleOpenLatex();
+
+private:
+    QString latexstring;
 
     CodeEditor* codeEditor;
-
-
+    PythonWorker* pythonWorker;
+    StatusWidget* statusWidget;
 };
 #endif // MAINWINDOW_H

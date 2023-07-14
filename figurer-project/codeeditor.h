@@ -9,6 +9,7 @@
 #include <QSyntaxStyle>
 #include <QPythonHighlighter>
 
+
 class CodeEditor : public QCodeEditor
 {
     Q_OBJECT
@@ -19,13 +20,15 @@ public:
 private Q_SLOTS:
     void onTextChanged();
 
+Q_SIGNALS:
+    void codeChanged(QString *);
+
 private:
     void initData();
 
     void loadStyle(QString path);
 
-//    QString loadCode(QString path);
-
+    QString pythonCode;
 
     QVector<QPair<QString, QString>> m_codeSamples;
     QCompleter* completer;
