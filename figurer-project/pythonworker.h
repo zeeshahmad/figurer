@@ -25,6 +25,7 @@ public Q_SLOTS:
     void runPython(QString *);
     void startPython();
     void endPython();
+
 Q_SIGNALS:
 
 private:

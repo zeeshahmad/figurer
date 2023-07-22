@@ -1,5 +1,5 @@
 #include "pythonworker.h"
-#include "pybind11/pytypes.h"
+#include <pybind11/pytypes.h>
 #include <pybind11/embed.h>
 
 #include <QDebug>

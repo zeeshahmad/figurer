@@ -6,7 +6,7 @@
 #include <QTextEdit>
 #include <QFile>
 
-#include "codeeditor.h"
+#include "projectmanager.h"
 #include "pythonworker.h"
 #include "statuswidget.h"
 
@@ -23,15 +23,22 @@ public:
     ~MainWindow();
     Ui::MainWindow *ui;
 
+    static void show_error(const QString& message);
+
 Q_SIGNALS:
+    void requestNewProject(QString&, QString&);
+    void requestOpenProject(QString&);
+    void requestCloseProject();
 
 private Q_SLOTS:
-    void handleOpenLatex();
+    void handleNewBtn();
+    void handleOpenBtn();
+    void handleCloseBtn();
+    void updateEnabledStates();
 
 private:
-    QString latexstring;
+    ProjectManager projectManager;
 
-    CodeEditor* codeEditor;
     PythonWorker* pythonWorker;
     StatusWidget* statusWidget;
 };

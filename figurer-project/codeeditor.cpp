@@ -6,7 +6,6 @@
 
 #include <QIODevice>
 
-#include <nlohmann/json.hpp>
 
 
 CodeEditor::CodeEditor(QWidget *parent): QCodeEditor(parent)

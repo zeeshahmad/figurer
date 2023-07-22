@@ -32,6 +32,13 @@ set(PROJECT_SOURCES
         figureview.h figureview.cpp
         statuswidget.h statuswidget.cpp
         pythonworker.h pythonworker.cpp
+        project.h project.cpp
+        projectfileio.h projectfileio.cpp
+        iexternalfileparser.h iexternalfileparser.cpp
+        latexfileparser.h latexfileparser.cpp
+        projectmanager.h projectmanager.cpp
+        externalfileio.h externalfileio.cpp
+        externalfileparserchooser.h externalfileparserchooser.cpp
 )
 
 add_subdirectory(QCodeEditor)

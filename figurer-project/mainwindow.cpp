@@ -2,88 +2,85 @@
 #include "./ui_mainwindow.h"
 #include <QDebug>
 #include <QFileDialog>
-#include <QFile>
 #include <QThread>
+#include <QMessageBox>
 
 #include "statuswidget.h"
 
-#include <pybind11/embed.h>
-
-#include <string>
-#include <iostream>
-#include <stdio.h>
-
-#include <sstream>
-#include <vector>
-
-
-namespace py = pybind11;
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
-    , ui(new Ui::MainWindow)
+    , ui(new Ui::MainWindow), projectManager(this)
 {
     ui->setupUi(this);
 
-    codeEditor = ui->textEditTest;
     statusWidget = new StatusWidget(ui->statusbar);
     pythonWorker = new PythonWorker;
 
-
-    connect(codeEditor, SIGNAL(codeChanged(QString*)),statusWidget, SLOT(restartCooldown(QString*)));
+    connect(ui->codeEditor, SIGNAL(codeChanged(QString*)),statusWidget, SLOT(restartCooldown(QString*)));
     connect(statusWidget, SIGNAL(cooldownCompleted(QString*)),pythonWorker, SLOT(runPython(QString*)));
+
+    connect(ui->newButton, SIGNAL(clicked()), this, SLOT(handleNewBtn()));
+    connect(ui->openButton, SIGNAL(clicked()), this, SLOT(handleOpenBtn()));
+    connect(ui->closeButton, SIGNAL(clicked()), this, SLOT(handleCloseBtn()));
+
+    connect(this, SIGNAL(requestNewProject(QString&,QString&)), &projectManager, SLOT(createProjectRequested(QString&,QString&)));
+    connect(this, SIGNAL(requestOpenProject(QString&)), &projectManager, SLOT(openProjectRequested(QString&)));
+    connect(this, SIGNAL(requestCloseProject()), &projectManager, SLOT(closeProjectRequested()));
+
+    connect(&projectManager, SIGNAL(projectOpened()), this, SLOT(updateEnabledStates()));
+    connect(&projectManager, SIGNAL(projectClosed()), this, SLOT(updateEnabledStates()));
+
+    updateEnabledStates();
 }
 
 MainWindow::~MainWindow()
 {
-
+    delete pythonWorker;
     delete ui;
 }
 
-void MainWindow::handleOpenLatex()
+void MainWindow::show_error(const QString &message)
 {
-    QString latexpath = QFileDialog::getOpenFileName(this, "Open latex document", nullptr, "tex files (*.tex)");
-    qInfo() << latexpath;
-    QFile latexfile(latexpath);
-    if (latexfile.open(QIODevice::ReadOnly| QIODevice::Text)) {
-        //QTextStream in(&latexfile);
-        //QString latextext = in.readAll();
-        latexstring = QString(latexfile.readAll());
-        qInfo() << latexstring;
-    }
+    QMessageBox messageBox;
+    messageBox.critical(0,"Error",message);
+    messageBox.setFixedSize(500,200);
+}
 
-    //ensure latexstring exists and does not contain ''' (python triple quotes)
-    //can also get python to open the latex file! (rather than cpp)
-    //put the following code into a resource python file prepending it with predefined variables from cpp (currentpath, latexstring, etc)
-    std::vector<std::string> code = {
-        "import sys\n",
-        "sys.path.append('",QDir::currentPath().toStdString(),"\\\\python\\\\texsoup')\n",
-        "print(sys.path)\n",
-        "import TexSoup\n",
-        "soup = TexSoup.TexSoup(r'''",latexstring.toStdString(),"''')\n",
-        "print(soup.find_all('includegraphics')[0].args[1])"
-    };
-
-    std::stringstream codestream;
-    std::string py_command_begin = "";
-    std::string py_command_end = "";
-
-    codestream << py_command_begin;
-    for (std::string& codeline : code) {
-        codestream << codeline;
-    }
-    codestream << py_command_end;
-    std::cout << codestream.str() << std::endl;
-    //    std::cout << QDir::currentPath().toStdString() << std::endl;
-    std::string codestring = codestream.str();
-    const char* codechar = codestring.c_str();
+void MainWindow::handleNewBtn()
+{
+    QString saveFilePath = QFileDialog::getSaveFileName(this, "Choose project location and name", nullptr, "Figurer project (*.json)");
+    if (saveFilePath.isNull()) return;
+    qInfo()<<"saveFilePath: " << saveFilePath;
+    QString externalFilePath = QFileDialog::getOpenFileName(this, "Choose the document that will contain figures", nullptr, "LaTeX document (*.tex);; Word document (*.docx)");
+    if (externalFilePath.isNull()) return;
+    qInfo() <<"externalFilePath: "<< externalFilePath;
+    Q_EMIT requestNewProject(saveFilePath, externalFilePath);
+}
 
 
-    Py_Initialize();
-    PyRun_SimpleString(codechar);
-    Py_Finalize();
 
+void MainWindow::handleOpenBtn()
+{
+    QString openFilePath = QFileDialog::getOpenFileName(this, "Open project file", nullptr, "Figurer project (*.json)");
+    if (openFilePath.isNull()) return; //user cancelled dialog
+    qInfo() << "openFilePath: " << openFilePath;
+    Q_EMIT requestOpenProject(openFilePath);
 
+}
+
+void MainWindow::handleCloseBtn()
+{
+    Q_EMIT requestCloseProject();
+}
+
+void MainWindow::updateEnabledStates()
+{
+    bool projectOpen = projectManager.isAProjectOpen();
+    ui->openButton->setEnabled(!projectOpen);
+    ui->newButton->setEnabled(!projectOpen);
+    ui->closeButton->setEnabled(projectOpen);
+    ui->codeEditor->setEnabled(projectOpen);
 }
 
 
