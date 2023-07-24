@@ -4,10 +4,13 @@
 #include <QString>
 
 #include "iexternalfileparser.h"
+#include "pythonuser.h"
+#include "pythonthread.h"
 
-class ExternalFileParserChooser
+class ExternalFileParserChooser: public PythonUser
 {
 public:
+    ExternalFileParserChooser(PythonThread * pt);
     IExternalFileParser* chooseUsingFileExtension(QString& filePathWithExtension);
 };
 

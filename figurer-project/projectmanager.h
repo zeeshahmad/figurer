@@ -6,13 +6,15 @@
 
 //consider making this singleton
 #include "project.h"
+#include "pythonuser.h"
+#include "pythonthread.h"
 #include <QObject>
 
-class ProjectManager : public QObject
+class ProjectManager : public QObject, public PythonUser
 {
     Q_OBJECT
 public:
-    explicit ProjectManager(QObject *parent = nullptr);
+    explicit ProjectManager(PythonThread *pythonThread, QObject *parent = nullptr);
 
     bool isAProjectOpen();
 

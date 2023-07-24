@@ -2,8 +2,8 @@
 
 #include <QDebug>
 
-ProjectManager::ProjectManager(QObject *parent)
-    : QObject{parent}
+ProjectManager::ProjectManager(PythonThread* pythonThread, QObject *parent)
+    : QObject{parent}, PythonUser{pythonThread}
 {
 
 }
@@ -21,7 +21,7 @@ void ProjectManager::createProjectRequested(QString& pathToNewFile, QString& pat
         Project::NewFileParams params;
         params.projectFilePath = pathToNewFile;
         params.externalFilePath = pathToExternalFile;
-        currentProject = new Project(params);
+        currentProject = new Project(pythonThread, params);
         Q_EMIT projectOpened();
     }
 }
@@ -34,7 +34,7 @@ void ProjectManager::openProjectRequested(QString& openedFilePath)
     } else {
         Project::ExistingFileParams params;
         params.projectFilePath = openedFilePath;
-        currentProject = new Project(params);
+        currentProject = new Project(pythonThread, params);
         Q_EMIT projectOpened();
     }
 }

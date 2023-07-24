@@ -1,6 +1,6 @@
 #include "figureview.h"
 
-FigureView::FigureView(QWidget *parent): QGraphicsView(parent)
+FigureView::FigureView(QWidget *parent): QLabel(parent)
 {
 
 }

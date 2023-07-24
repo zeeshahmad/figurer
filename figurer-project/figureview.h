@@ -1,9 +1,9 @@
 #ifndef FIGUREVIEW_H
 #define FIGUREVIEW_H
 
-#include <QGraphicsView>
+#include <Qlabel>
 
-class FigureView : public QGraphicsView
+class FigureView : public QLabel
 {
     Q_OBJECT
 public:

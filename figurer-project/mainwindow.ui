@@ -20,25 +20,6 @@
    <string>0</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="FigureView" name="graphicsView">
-    <property name="enabled">
-     <bool>true</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>550</x>
-      <y>40</y>
-      <width>441</width>
-      <height>551</height>
-     </rect>
-    </property>
-    <property name="frameShape">
-     <enum>QFrame::Box</enum>
-    </property>
-    <property name="frameShadow">
-     <enum>QFrame::Plain</enum>
-    </property>
-   </widget>
    <widget class="CodeEditor" name="codeEditor">
     <property name="geometry">
      <rect>
@@ -97,6 +78,22 @@
      <string>Close project</string>
     </property>
    </widget>
+   <widget class="FigureView" name="figureView">
+    <property name="geometry">
+     <rect>
+      <x>610</x>
+      <y>50</y>
+      <width>361</width>
+      <height>531</height>
+     </rect>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::Panel</enum>
+    </property>
+    <property name="text">
+     <string>figureView</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -128,8 +125,8 @@
   </customwidget>
   <customwidget>
    <class>FigureView</class>
-   <extends>QGraphicsView</extends>
-   <header location="global">figureview.h</header>
+   <extends>QLabel</extends>
+   <header>figureview.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

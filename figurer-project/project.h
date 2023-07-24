@@ -8,11 +8,12 @@
 #include <QString>
 #include <QJsonObject>
 
-#include "externalfileio.h"
-#include "externalfileparserchooser.h"
+#include "externalfile.h"
 #include "projectfileio.h"
+#include "pythonthread.h"
+#include "pythonuser.h"
 
-class Project : public QObject
+class Project : public QObject, public PythonUser
 {
     Q_OBJECT
 public:
@@ -26,8 +27,8 @@ public:
     };
 
 
-    explicit Project(ExistingFileParams& , QObject *parent = nullptr);
-    explicit Project(NewFileParams&, QObject *parent = nullptr);
+    explicit Project(PythonThread* pt, ExistingFileParams& , QObject *parent = nullptr);
+    explicit Project(PythonThread* pt, NewFileParams&, QObject *parent = nullptr);
     ~Project();
 
 Q_SIGNALS:
@@ -38,10 +39,7 @@ private:
     QJsonObject jsonData;
 
     ProjectFileIO projectFileIO;
-    ExternalFileIO* externalFileIO;
-    IExternalFileParser* externalParser = nullptr;
-    ExternalFileParserChooser parserChooser;
-    void assignParser(QString& pathWithExtension);
+    ExternalFile* externalFileIO;
 
 };
 

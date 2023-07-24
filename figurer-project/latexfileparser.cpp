@@ -8,22 +8,23 @@
 #include <vector>
 #include <iostream>
 
-LatexFileParser::LatexFileParser()
+
+LatexFileParser::LatexFileParser(PythonThread *pt)
+    :PythonUser{pt}
 {
 
 }
 
-void LatexFileParser::parse()
+void LatexFileParser::parse(QString &filePath)
 {
-    QString latexpath("");
-    qInfo() << latexpath;
-    QFile latexfile(latexpath);
+    QFile latexfile(filePath);
     QString latexstring;
     if (latexfile.open(QIODevice::ReadOnly| QIODevice::Text)) {
         //QTextStream in(&latexfile);
         //QString latextext = in.readAll();
         latexstring = QString(latexfile.readAll());
         qInfo() << latexstring;
+        latexfile.close();
     }
 
     //ensure latexstring exists and does not contain ''' (python triple quotes)

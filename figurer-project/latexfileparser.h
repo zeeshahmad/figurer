@@ -7,14 +7,15 @@
 //https://forum.qt.io/topic/131892/interfaces-must-inherit-qobject
 
 #include "iexternalfileparser.h"
+#include "pythonuser.h"
 
 
-class LatexFileParser: public IExternalFileParser
+class LatexFileParser: public IExternalFileParser, public PythonUser
 {
 public:
-    LatexFileParser();
+    LatexFileParser(PythonThread*pt);
 
-    void parse();
+    void parse(QString& filePath);
 };
 
 #endif // LATEXFILEPARSER_H

@@ -26,20 +26,25 @@ cmake_print_variables(PROJECT_SOURCE_DIR)
 
 set(PROJECT_SOURCES
         main.cpp
+        app.h app.cpp
         mainwindow.cpp mainwindow.h
         mainwindow.ui
         codeeditor.cpp codeeditor.h
         figureview.h figureview.cpp
         statuswidget.h statuswidget.cpp
-        pythonworker.h pythonworker.cpp
         project.h project.cpp
         projectfileio.h projectfileio.cpp
         iexternalfileparser.h iexternalfileparser.cpp
         latexfileparser.h latexfileparser.cpp
         projectmanager.h projectmanager.cpp
-        externalfileio.h externalfileio.cpp
+        externalfile.h externalfile.cpp
         externalfileparserchooser.h externalfileparserchooser.cpp
+        pythonthread.h pythonthread.cpp
+        pythonuser.h pythonuser.cpp
 )
+
+#https://github.com/pybind/pybind11/pull/2370
+find_package(Python COMPONENTS Interpreter Development)
 
 add_subdirectory(QCodeEditor)
 add_subdirectory(json)

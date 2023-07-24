@@ -7,8 +7,12 @@
 #include <QFile>
 
 #include "projectmanager.h"
-#include "pythonworker.h"
+#include "pythonthread.h"
 #include "statuswidget.h"
+#include <pybind11/embed.h>
+#include <memory>
+
+namespace py=pybind11;
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -25,6 +29,8 @@ public:
 
     static void show_error(const QString& message);
 
+    PythonThread *pythonThread;
+
 Q_SIGNALS:
     void requestNewProject(QString&, QString&);
     void requestOpenProject(QString&);
@@ -39,7 +45,8 @@ private Q_SLOTS:
 private:
     ProjectManager projectManager;
 
-    PythonWorker* pythonWorker;
     StatusWidget* statusWidget;
+
+    void pythonTestFunc(py::dict*);
 };
 #endif // MAINWINDOW_H

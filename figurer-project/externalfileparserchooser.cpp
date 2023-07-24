@@ -7,6 +7,12 @@
 #include "iexternalfileparser.h"
 #include "latexfileparser.h"
 
+ExternalFileParserChooser::ExternalFileParserChooser(PythonThread *pt)
+    : PythonUser{pt}
+{
+
+}
+
 IExternalFileParser* ExternalFileParserChooser::chooseUsingFileExtension(QString &filePathWithExtension)
 {
     QFileInfo fileInfo(filePathWithExtension);
@@ -15,7 +21,7 @@ IExternalFileParser* ExternalFileParserChooser::chooseUsingFileExtension(QString
     IExternalFileParser* newparser = nullptr;
     qInfo() << suffix;
     if (suffix.compare("tex", Qt::CaseSensitivity::CaseInsensitive) == 0){
-        newparser = new LatexFileParser();
+        newparser = new LatexFileParser(pythonThread);
     }
 
     if (newparser==nullptr) qFatal()<< "Unable to choose a parser implementation!";
