@@ -40,12 +40,10 @@ MainWindow::MainWindow(QWidget *parent)
     connect(&projectManager, SIGNAL(projectOpened()), this, SLOT(updateEnabledStates()));
     connect(&projectManager, SIGNAL(projectClosed()), this, SLOT(updateEnabledStates()));
 
+    updateEnabledStates();
+
     pythonThread->start();
-    pythonThread->appendToQueue("a=1");
-    pythonThread->appendToQueue(R"(
-a+=23
-a-=1
-    )");
+
 }
 
 //    {
@@ -127,7 +125,7 @@ void MainWindow::handleNewBtn()
     if (externalFilePath.isNull()) return;
     qInfo() <<"externalFilePath: "<< externalFilePath;
     Q_EMIT requestNewProject(saveFilePath, externalFilePath);
-    qInfo() << "works till here";
+
 }
 
 

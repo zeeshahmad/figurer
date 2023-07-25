@@ -8,14 +8,18 @@
 
 #include "iexternalfileparser.h"
 #include "pythonuser.h"
+#include <QObject>
 
-
-class LatexFileParser: public IExternalFileParser, public PythonUser
+class LatexFileParser: public QObject, public IExternalFileParser, public PythonUser
 {
+    Q_OBJECT
 public:
     LatexFileParser(PythonThread*pt);
 
     void parse(QString& filePath);
+
+public Q_SLOTS:
+    void recievePythonResult(QSharedPointer<QString> result);
 };
 
 #endif // LATEXFILEPARSER_H

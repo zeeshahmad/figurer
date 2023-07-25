@@ -22,5 +22,5 @@ void ExternalFile::assignParser(QString &pathWithExtension)
 
 void ExternalFile::rescanFile()
 {
-    //parser->parse(filePath);
+    parser->parse(filePath);
 }
