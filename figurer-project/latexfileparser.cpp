@@ -1,4 +1,5 @@
 #include "latexfileparser.h"
+#include "qjsondocument.h"
 
 #include <QDebug>
 #include <QString>
@@ -15,39 +16,33 @@ LatexFileParser::LatexFileParser(PythonThread *pt)
 
 }
 
-void LatexFileParser::parse(QString &filePath)
+QJsonObject LatexFileParser::parse(QString &filePath)
 {
     QFile latexfile(filePath);
     QString latexstring;
     if (latexfile.open(QIODevice::ReadOnly| QIODevice::Text)) {
         latexstring = QString(latexfile.readAll());
         latexfile.close();
-    }
+    } else qWarning()<<"Couldn't open latex file for parsing.";
 
-    //ensure latexstring exists and does not contain ''' (python triple quotes)
-    //can also get python to open the latex file! (rather than cpp)
-    //put the following code into a resource python file prepending it with predefined variables from cpp (currentpath, latexstring, etc)
+    QFile pythonScanCodeFile(":/python/scan_latex.py");
+    QString pythonScanCode;
+    if (pythonScanCodeFile.open(QIODevice::ReadOnly|QIODevice::Text)) {
+        pythonScanCode = QString::fromUtf8(pythonScanCodeFile.readAll());
+        pythonScanCodeFile.close();
+    } else qWarning()<<"Couldn't open python code used for scanning latex files.";
 
 
-    PythonThread::Code code(QString(R"(
-import sys
-sys.path.append('%1\\python\\texsoup')
-print(sys.path)
-import TexSoup
-soup = TexSoup.TexSoup(r''' %2 ''')
-print(soup.find_all('includegraphics')[0].args[1])
-varinpython='what a cool string'
-    )").arg(QDir::currentPath(),latexstring), "latexfileparser",
-        this, "recievePythonResult", "varinpython");
+    PythonThread::Code code(pythonScanCode.arg(QDir::currentPath(),latexstring), "latexfileparser",
+        this, "receiveScanResult", "scan_result");
 
-    pythonThread->queueCode(code);
-
-}
-
-void LatexFileParser::recievePythonResult(QSharedPointer<QString> result)
-{
-    qInfo() << "recieved result: "<< *result;
+    QFuture<QString> resultFuture = pythonThread->queueCode(code);
+    resultFuture.waitForFinished();
+    qInfo() << "future finished: " << resultFuture.result();
+    QJsonDocument resultJson = QJsonDocument::fromJson(resultFuture.result().toUtf8());
+    return resultJson.object();
 
 }
+
 
 

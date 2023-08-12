@@ -16,10 +16,9 @@ class LatexFileParser: public QObject, public IExternalFileParser, public Python
 public:
     LatexFileParser(PythonThread*pt);
 
-    void parse(QString& filePath);
+    QJsonObject parse(QString& filePath);
 
 public Q_SLOTS:
-    void recievePythonResult(QSharedPointer<QString> result);
 };
 
 #endif // LATEXFILEPARSER_H

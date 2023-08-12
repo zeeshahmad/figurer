@@ -47,7 +47,7 @@ set(PROJECT_SOURCES
 find_package(Python COMPONENTS Interpreter Development)
 
 add_subdirectory(QCodeEditor)
-add_subdirectory(json)
+#add_subdirectory(json)
 add_subdirectory(pybind11)
 
 #add_subdirectory(boost)
@@ -85,7 +85,7 @@ endif()
 
 target_link_libraries(figurer-project PRIVATE Qt${QT_VERSION_MAJOR}::Widgets
     QCodeEditor
-    nlohmann_json::nlohmann_json
+#    nlohmann_json::nlohmann_json
     #Boost::process
     #wsock32
 #    ${Python_LIBRARIES}

@@ -6,6 +6,7 @@
 #include <QList>
 #include <QString>
 #include <QSharedPointer>
+#include <QFuture>
 
 class PythonThread : public QThread
 {
@@ -26,18 +27,19 @@ public:
         QObject* callingObject{nullptr};
         const char *callbackName{nullptr};
         const char *stringVarName{nullptr};
+        QSharedPointer<QPromise<QString>> promise;
     };
 
     explicit PythonThread();
 
     void run();
-    void queueCode(Code codeBlock);
+    QFuture<QString> queueCode(Code& codeBlock);
     void cancelCodesWithTag(QString tag);
     QList<Code> pythonQueue;
     QMutex loopMutex;
     QMutex mutex;
 Q_SIGNALS:
-    void resultReady(QSharedPointer<QString>);
+//    void resultReady(QSharedPointer<QString>);
 };
 
 #endif // PYTHONTHREAD_H

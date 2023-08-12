@@ -8,7 +8,6 @@ ExternalFile::ExternalFile(PythonThread *pt, QString& filePath, QObject *parent)
     : QObject{parent}, PythonUser{pt}, filePath{filePath}, parserChooser{pt}
 {
     assignParser(filePath);
-    rescanFile();
 }
 
 void ExternalFile::assignParser(QString &pathWithExtension)
@@ -20,7 +19,9 @@ void ExternalFile::assignParser(QString &pathWithExtension)
     }
 }
 
-void ExternalFile::rescanFile()
+void ExternalFile::rescan()
 {
-    parser->parse(filePath);
+    QJsonObject updatedInfo = parser->parse(filePath);
+    data = updatedInfo["includegraphics"].toVariant().toStringList();
+    Q_EMIT rescanned(data);
 }

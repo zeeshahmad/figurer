@@ -26,7 +26,7 @@ void ProjectFileIO::readFile()
         contents = file.readAll();
         file.close();
     }
-    qInfo() << "In projectfileio readFile: " << contents;
+//    qInfo() << "In projectfileio readFile: " << contents;
     //could add a validation of json data using a schema
     data = QJsonDocument::fromJson(contents.toUtf8()).object();
 }

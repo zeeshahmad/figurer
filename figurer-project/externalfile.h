@@ -20,9 +20,10 @@ public:
 
     QList<QString> data;
 Q_SIGNALS:
+    void rescanned(const QList<QString>&);
 
 public Q_SLOTS:
-    void rescanFile();
+    void rescan();
 private:
     std::unique_ptr<IExternalFileParser> parser;
     ExternalFileParserChooser parserChooser;

@@ -1,7 +1,7 @@
 #ifndef PROJECT_H
 #define PROJECT_H
 
-//instantiates and holds project information
+//holds and provides an interface to project information
 //this is the core of project information
 
 #include <QObject>
@@ -26,21 +26,26 @@ public:
         QString projectFilePath;
     };
 
-
     explicit Project(PythonThread* pt, ExistingFileParams& , QObject *parent = nullptr);
     explicit Project(PythonThread* pt, NewFileParams&, QObject *parent = nullptr);
+    //noncopyable
+    Project(const Project&)=delete;
+    Project& operator=(const Project&)=delete;
     ~Project();
 
-Q_SIGNALS:
-
+public Q_SLOTS:
+    void consolidateFigureList(const QList<QString>& newFigList);
 private:
 
     QString latexstring;
     QJsonObject jsonData;
 
     ProjectFileIO projectFileIO;
-    ExternalFile* externalFileIO;
+    ExternalFile* externalFile;
 
+    void init();
+    void makeConnections();
+    void initJson();
 };
 
 #endif // PROJECT_H
