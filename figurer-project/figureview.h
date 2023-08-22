@@ -11,6 +11,7 @@ public:
 
 private Q_SLOTS:
 
+
     void showUpdatedFigure(QString &figurebase64);
 };
 

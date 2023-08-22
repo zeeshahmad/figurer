@@ -1,8 +1,8 @@
 #ifndef STATUSWIDGET_H
 #define STATUSWIDGET_H
 
-#include "qprogressbar.h"
 #include <QWidget>
+#include <QProgressBar>
 
 class StatusWidget : public QWidget
 {

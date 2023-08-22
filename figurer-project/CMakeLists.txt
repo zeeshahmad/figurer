@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(figurer-project VERSION 0.1 LANGUAGES CXX)
+project(figurer-app VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
@@ -9,20 +9,16 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+option(DISABLE_TESTS "Disable tests")
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
+add_definitions(-DQT_NO_KEYWORDS)
 
-#https://stackoverflow.com/questions/11041299/python-h-no-such-file-or-directory
-#https://cmake.org/cmake/help/latest/module/FindPython3.html
-#find_package (Python COMPONENTS Interpreter Development)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Test)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Test)
+find_package(Python COMPONENTS Interpreter Development)
+
 
 file(COPY ${PROJECT_SOURCE_DIR}/texsoup DESTINATION python)
-#file(COPY ${PROJECT_SOURCE_DIR}/pybind11/pybind11 DESTINATION python/pybind11)
-
-
-include(CMakePrintHelpers)
-cmake_print_variables(PROJECT_SOURCE_DIR)
 
 set(PROJECT_SOURCES
         main.cpp
@@ -43,56 +39,33 @@ set(PROJECT_SOURCES
         pythonuser.h pythonuser.cpp
 )
 
-#https://github.com/pybind/pybind11/pull/2370
-find_package(Python COMPONENTS Interpreter Development)
-
 add_subdirectory(QCodeEditor)
-#add_subdirectory(json)
 add_subdirectory(pybind11)
 
-#add_subdirectory(boost)
+# FIGURER LIBRARY
+qt_add_library(figurer-lib SHARED ${PROJECT_SOURCES})
 
-#https://stackoverflow.com/questions/46571438/turning-the-no-keyword-qt-option-on-in-a-cmake-file-to-work-with-boostsignal
-add_definitions(-DQT_NO_KEYWORDS)
+target_include_directories(figurer-lib
+    PRIVATE ${PROJECT_SOURCE_DIR}
+)
 
-if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_executable(figurer-project
-        MANUAL_FINALIZATION
-        resources/resources.qrc
-        ${PROJECT_SOURCES}
-    )
-    target_include_directories(figurer-project
-        PRIVATE ${PROJECT_SOURCE_DIR}
-#        PUBLIC ${Python_INCLUDE_DIRS}
-    )
-# Define target properties for Android with Qt 6 as:
-#    set_property(TARGET figurer-project APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
-#                 ${CMAKE_CURRENT_SOURCE_DIR}/android)
-# For more information, see https://doc.qt.io/qt-6/qt-add-executable.html#target-creation
-else()
-    if(ANDROID)
-        add_library(figurer-project SHARED
-            ${PROJECT_SOURCES}
-        )
-# Define properties for Android with Qt 5 after find_package() calls as:
-#    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
-    else()
-        add_executable(figurer-project
-            ${PROJECT_SOURCES}
-        )
-    endif()
-endif()
 
-target_link_libraries(figurer-project PRIVATE Qt${QT_VERSION_MAJOR}::Widgets
+target_link_libraries(figurer-lib PRIVATE
+    Qt${QT_VERSION_MAJOR}::Widgets
     QCodeEditor
-#    nlohmann_json::nlohmann_json
-    #Boost::process
-    #wsock32
-#    ${Python_LIBRARIES}
     pybind11::embed)
 
-set_target_properties(figurer-project PROPERTIES
-    MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
+#FIGURER APP
+qt_add_executable(figurer-app
+    MANUAL_FINALIZATION
+    resources/resources.qrc
+)
+
+target_link_libraries(figurer-app PRIVATE
+    figurer-lib)
+
+set_target_properties(figurer-app PROPERTIES
+    MACOSX_BUNDLE_GUI_IDENTIFIER com.zeeshan.figurer
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
     MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
     MACOSX_BUNDLE TRUE
@@ -100,12 +73,17 @@ set_target_properties(figurer-project PROPERTIES
     CXX_VISIBILITY_PRESET hidden # for pybind warning e.g. when py::dict a field of pythonworker
 )
 
-install(TARGETS figurer-project
+install(TARGETS figurer-app
     BUNDLE DESTINATION .
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
+qt_finalize_executable(figurer-app)
 
-if(QT_VERSION_MAJOR EQUAL 6)
-    qt_finalize_executable(figurer-project)
+
+if (DISABLE_TESTS)
+    message(STATUS "Testing disabled")
+else()
+    message(STATUS "Testing enabled")
+    add_subdirectory(Tests)
 endif()
