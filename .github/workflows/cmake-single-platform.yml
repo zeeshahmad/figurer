@@ -37,7 +37,7 @@ jobs:
         tools: 'tools_cmake tools_ninja'
     - name: Print 
       run: |
-        cd /home/runner/work/figurer/Qt/6.5.1/
+        cd /home/runner/work/figurer/Qt/6.5.1/gcc_64/plugins/platforms
         pwd
         ls
     - name: Setup xvfb
