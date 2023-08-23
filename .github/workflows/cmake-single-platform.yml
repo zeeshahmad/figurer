@@ -37,10 +37,9 @@ jobs:
         tools: 'tools_cmake tools_ninja'
     - name: Print 
       run: |
-        cd /home/runner/work/figurer/Qt/Tools/CMake/bin
+        cd /home/runner/work/figurer/Qt
         pwd
         ls
-        g++ --version
     - name: Setup xvfb
       run: Xvfb :1 -screen 0 1600x1200x24 &
     - name: 'Threeal: Configure, build, test'
