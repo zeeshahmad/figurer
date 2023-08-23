@@ -47,6 +47,7 @@ jobs:
       env:
         DISPLAY: :1
         QT_QPA_PLATFORM_PLUGIN_PATH: /home/runner/work/figurer/Qt/6.5.1/gcc_64/plugins/platforms
+        QT_QPA_PLATFORM: offscreen
       with:
         run-build: true
         run-test: true
