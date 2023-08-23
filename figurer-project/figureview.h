@@ -1,7 +1,7 @@
 #ifndef FIGUREVIEW_H
 #define FIGUREVIEW_H
 
-#include <Qlabel>
+#include <QLabel>
 
 class FigureView : public QLabel
 {
@@ -10,7 +10,6 @@ public:
     FigureView(QWidget *parent = 0);
 
 private Q_SLOTS:
-
 
     void showUpdatedFigure(QString &figurebase64);
 };
