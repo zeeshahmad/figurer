@@ -20,23 +20,53 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Change to project dir
-      run: cd .
-    - name: Print
-      run: pwd
-    - name: Configure CMake
-      # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
-      # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+    - name: Checkout repo and submodules
+      uses: actions/checkout@v3
+      with:
+        submodules: recursive
+    # - name: Update linux packages
+    #   run: |
+    #     sudo apt update
+    #     sudo apt install build-essential cmake ninja-build
+      
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v3
+      with:
+        version: '6.5.1'
+        arch: 'gcc_64'
+        tools: 'tools_cmake tools_ninja'
+    - name: Print 
+      run: |
+        cd /home/runner/work/figurer/Qt/Tools/CMake/bin
+        pwd
+        ls
+    - name: Threeal Configure, build
+      uses:  threeal/cmake-action@v1.3.0
+      with:
+        run-build: true
+        run-test: true
+        source-dir: figurer-project
+        build-dir: build
+        generator: Ninja
+        cxx-compiler: g++
+        options: CMAKE_PREFIX_PATH=${QT_ROOT_DIR}
+        
+    # - name: Configure CMake
+    #   working-directory: ./figurer-project
+    #   # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
+    #   # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
+    #   run: cmake -B ${{github.workspace}}/build -G "Ninja" -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+    # - name: cmake help
+    #   working-directory: ./figurer-project
+    #   run: cmake --help
+    # - name: Build
+    #   working-directory: ./figurer-project
+    #   # Build your program with the given configuration
+    #   run: cmake -DCMAKE_CXX_FLAGS="-std=c++17" --build ${{github.workspace}}/build
 
-    - name: Build
-      # Build your program with the given configuration
-      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
-
-    - name: Test
-      working-directory: ${{github.workspace}}/build
-      # Execute tests defined by the CMake configuration.
-      # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
-      run: ctest -C ${{env.BUILD_TYPE}}
+    # - name: Test
+    #   working-directory: ${{github.workspace}}/build
+    #   # Execute tests defined by the CMake configuration.
+    #   # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
+    #   run: ctest -C ${{env.BUILD_TYPE}}
 

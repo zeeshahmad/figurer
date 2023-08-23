@@ -14,7 +14,7 @@ option(DISABLE_TESTS "Disable tests")
 add_definitions(-DQT_NO_KEYWORDS)
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Test)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Test)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Widgets Test)
 find_package(Python COMPONENTS Interpreter Development)
 
 
@@ -51,6 +51,7 @@ target_include_directories(figurer-lib
 
 
 target_link_libraries(figurer-lib PRIVATE
+    Qt${QT_VERSION_MAJOR}::Core
     Qt${QT_VERSION_MAJOR}::Widgets
     QCodeEditor
     pybind11::embed)
