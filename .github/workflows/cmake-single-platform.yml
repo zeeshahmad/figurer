@@ -40,6 +40,7 @@ jobs:
         cd /home/runner/work/figurer/Qt/Tools/CMake/bin
         pwd
         ls
+        g++ --version
     - name: Threeal Configure, build
       uses:  threeal/cmake-action@v1.3.0
       with:
