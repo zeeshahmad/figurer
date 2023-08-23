@@ -41,8 +41,12 @@ jobs:
         pwd
         ls
         g++ --version
-    - name: Threeal Configure, build
+    - name: Setup xvfb
+      run: Xvfb :1 -screen 0 1600x1200x24 &
+    - name: 'Threeal: Configure, build, test'
       uses:  threeal/cmake-action@v1.3.0
+      env:
+        DISPLAY: :1
       with:
         run-build: true
         run-test: true
@@ -51,7 +55,8 @@ jobs:
         generator: Ninja
         cxx-compiler: g++
         options: CMAKE_PREFIX_PATH=${QT_ROOT_DIR}
-        
+      name: Teardown xvfb
+        killall Xvfb
     # - name: Configure CMake
     #   working-directory: ./figurer-project
     #   # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
