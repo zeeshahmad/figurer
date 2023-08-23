@@ -46,6 +46,7 @@ jobs:
       uses:  threeal/cmake-action@v1.3.0
       env:
         DISPLAY: :1
+        QT_QPA_PLATFORM_PLUGIN_PATH: /home/runner/work/figurer/Qt/6.5.1/gcc_64/plugins/platforms
       with:
         run-build: true
         run-test: true
