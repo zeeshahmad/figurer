@@ -2,9 +2,6 @@ project(figurer-tests VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_AUTOMOC ON)
 
-enable_testing()
-
-
 
 set(TEST_FILES
         statuswidget_test.cpp

@@ -83,8 +83,9 @@ qt_finalize_executable(figurer-app)
 
 
 if (DISABLE_TESTS)
-    message(STATUS "Testing disabled")
+    message(STATUS "Figurer testing disabled")
 else()
-    message(STATUS "Testing enabled")
+    message(STATUS "Figurer testing enabled")
+    enable_testing()
     add_subdirectory(Tests)
 endif()
