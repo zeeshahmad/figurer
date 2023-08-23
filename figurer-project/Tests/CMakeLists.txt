@@ -2,7 +2,7 @@ project(figurer-tests VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_AUTOMOC ON)
 
-enable_testing(true)
+enable_testing()
 
 
 
