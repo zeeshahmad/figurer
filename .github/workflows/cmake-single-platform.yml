@@ -55,8 +55,8 @@ jobs:
         generator: Ninja
         cxx-compiler: g++
         options: CMAKE_PREFIX_PATH=${QT_ROOT_DIR}
-      name: Teardown xvfb
-        killall Xvfb
+    - name: Teardown xvfb
+      run: killall Xvfb
     # - name: Configure CMake
     #   working-directory: ./figurer-project
     #   # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
