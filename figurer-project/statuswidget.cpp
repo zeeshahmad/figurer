@@ -9,6 +9,7 @@ StatusWidget::StatusWidget(QWidget *parent)
 {
     cooldownBar = new QProgressBar(this);
     cooldownBar->setMaximum(50);
+    cooldownBar->setValue(0);
 
     timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, &StatusWidget::updateBar);
@@ -16,6 +17,7 @@ StatusWidget::StatusWidget(QWidget *parent)
 
 void StatusWidget::restartCooldown(QString* pythonCode)
 {
+    //probably producing leaks for Qstring* pythonCode, check!
     this->pythonCode = pythonCode;
     if (timer->isActive()) {
         timer->stop();
