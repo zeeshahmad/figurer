@@ -1,4 +1,5 @@
 #include <QTest>
+#include <QSignalSpy>
 
 #include "../statuswidget.h"
 
@@ -7,13 +8,23 @@ class StatusWidgetTest: public QObject
     Q_OBJECT;
 
 private Q_SLOTS:
-    void test1();
+    void restartCooldownSimple();
+
+private:
+
 };
 
-void StatusWidgetTest::test1()
+void StatusWidgetTest::restartCooldownSimple()
 {
     StatusWidget sw;
-    QCOMPARE("haha","haha");
+    QString samplecode = "sample code";
+    QSignalSpy spy(&sw, SIGNAL(cooldownCompleted(QString*)));
+
+    sw.restartCooldown(&samplecode);//probably producing leaks for Qstring*, check!
+
+    spy.wait();
+
+    QCOMPARE(spy.count(), 1);
 }
 
 QTEST_MAIN(StatusWidgetTest)
