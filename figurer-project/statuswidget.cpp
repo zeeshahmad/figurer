@@ -17,12 +17,11 @@ StatusWidget::StatusWidget(QWidget *parent)
 void StatusWidget::restartCooldown(QString* pythonCode)
 {
     this->pythonCode = pythonCode;
-    if (timer->isActive()){
+    if (timer->isActive()) {
         timer->stop();
     }
     cooldownBar->setValue(0);
     timer->start(10);
-
 }
 
 void StatusWidget::updateBar()
