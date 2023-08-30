@@ -1,7 +1,6 @@
 #ifndef APP_H
 #define APP_H
 
-#include "pythonthread.h"
 #include <QApplication>
 #include <QThread>
 
@@ -11,8 +10,6 @@ class App : public QApplication
 public:
     App(int argc, char *argv[]);
     ~App();
-
-
 
 Q_SIGNALS:
 

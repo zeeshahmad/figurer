@@ -6,45 +6,30 @@
 #include <QJsonArray>
 #include <QJsonObject>
 
-#include <string>
-#include <iostream>
-#include <stdio.h>
 
-#include <sstream>
-#include <vector>
-
-Project::Project(PythonThread* pt, ExistingFileParams& params, QObject *parent)
-    : QObject{parent}, PythonUser{pt},
-    projectFileIO{params.projectFilePath, jsonData}
+Project::Project(ProjectTools *tools, ExistingFileParams& params, QObject *parent)
+    : QObject{parent}, projectFilePath{params.projectFilePath},tools{tools}
 {
-    projectFileIO.readFile();
-    QString externalFilePath = jsonData["externalFilePath"].toString();
-    qInfo() << "in Project constructor(existing) : " << externalFilePath;
-    externalFile = new ExternalFile(pythonThread, externalFilePath);
+    tools->io->readFile(params.projectFilePath, jsonData);
     init();
 }
 
-Project::Project(PythonThread* pt, NewFileParams& params, QObject *parent)
-    : QObject{parent}, PythonUser{pt},
-    projectFileIO{params.projectFilePath, jsonData}
+Project::Project(ProjectTools *tools, NewFileParams& params, QObject *parent)
+    : QObject{parent}, projectFilePath{params.projectFilePath},tools{tools}
 {
     jsonData.insert("externalFilePath", params.externalFilePath);
-    projectFileIO.writeFile();
-    externalFile = new ExternalFile(pythonThread, params.externalFilePath);
     init();
+    tools->io->writeFile(params.projectFilePath, jsonData);
 }
+
 
 void Project::init()
 {
+    QStringList scannedFigList = tools->scanner->scan(getInfo("externalFilePath"));
+    consolidateFigureList(scannedFigList);
     initJson();
-    makeConnections();
-    externalFile->rescan();
 }
 
-void Project::makeConnections()
-{
-    connect(externalFile, SIGNAL(rescanned(QList<QString>)), this, SLOT(consolidateFigureList(QList<QString>)));
-}
 
 void Project::initJson()
 {
@@ -54,8 +39,15 @@ void Project::initJson()
 
 Project::~Project()
 {
-    delete externalFile;
 }
+
+QString Project::getInfo(const QString& infoKey)
+{
+    if (jsonData[infoKey].isString())
+        return QString(jsonData[infoKey].toString());
+    else return QString();
+}
+
 
 void Project::consolidateFigureList(const QList<QString>& updatedFigList)
 {
@@ -73,7 +65,7 @@ void Project::consolidateFigureList(const QList<QString>& updatedFigList)
     }
 
     if (danglingIds.length()>0) {
-        qInfo() << "Dangling figure ids in project: "<< danglingIds;
+        Q_EMIT foundDanglingIds(danglingIds);
     }
 
     QStringListIterator newListIt(newList);
@@ -86,7 +78,7 @@ void Project::consolidateFigureList(const QList<QString>& updatedFigList)
         newFiguresJson.append(newFig);
     }
     jsonData["figures"] = newFiguresJson;
-    projectFileIO.writeFile();
+    tools->io->writeFile(projectFilePath, jsonData);
 }
 
 

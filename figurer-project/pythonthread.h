@@ -39,7 +39,6 @@ public:
     QMutex loopMutex;
     QMutex mutex;
 Q_SIGNALS:
-//    void resultReady(QSharedPointer<QString>);
 };
 
 #endif // PYTHONTHREAD_H

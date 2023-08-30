@@ -9,14 +9,13 @@
 #include <QJsonDocument>
 
 
-ProjectFileIO::ProjectFileIO(QString& projectFilePath, QJsonObject& projectData)
-    :QObject{nullptr}, data{projectData}, filePath{projectFilePath}
+ProjectFileIO::ProjectFileIO(QObject* parent)
+    :QObject{parent}
 {
 
 }
 
-
-void ProjectFileIO::readFile()
+void ProjectFileIO::readFile(QString filePath, QJsonObject& dataHandle)
 {
     QFile file;
     file.setFileName(filePath);
@@ -26,17 +25,16 @@ void ProjectFileIO::readFile()
         contents = file.readAll();
         file.close();
     }
-//    qInfo() << "In projectfileio readFile: " << contents;
     //could add a validation of json data using a schema
-    data = QJsonDocument::fromJson(contents.toUtf8()).object();
+    dataHandle = QJsonDocument::fromJson(contents.toUtf8()).object();
 }
 
 
-void ProjectFileIO::writeFile()
+void ProjectFileIO::writeFile(QString filePath, QJsonObject& dataHandle)
 {
     QJsonDocument document;
     //again could add validation of data here
-    document.setObject(data);
+    document.setObject(dataHandle);
     QByteArray bytes = document.toJson(QJsonDocument::Indented);
     QFile file(filePath);
     if (file.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate)) {

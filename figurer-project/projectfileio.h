@@ -11,17 +11,14 @@ class ProjectFileIO: public QObject
 {
     Q_OBJECT
 public:
-    ProjectFileIO(QString& projectFilePath, QJsonObject& projectData);
-//    void newFile();
-    void readFile();
-    void writeFile();
-
-private:
-    QJsonObject& data;
-    QString& filePath;
+    ProjectFileIO(QObject* parent = nullptr);
+public Q_SLOTS:
+    virtual void readFile(QString filePath, QJsonObject& dataHandle);
+    virtual void writeFile(QString filePath, QJsonObject& dataHandle);
 
 
 Q_SIGNALS:
+private:
 };
 
 #endif // PROJECTFILEIO_H

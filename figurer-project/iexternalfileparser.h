@@ -9,6 +9,8 @@ class IExternalFileParser
 public:
     virtual ~IExternalFileParser() = default;
     virtual QJsonObject parse(QString& filePath)=0;
+    virtual bool canParse(QString& filePath) =0;
+
 
 };
 

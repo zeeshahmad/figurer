@@ -6,8 +6,6 @@
 #include <QDir>
 
 #include <string>
-#include <vector>
-#include <iostream>
 
 
 LatexFileParser::LatexFileParser(PythonThread *pt)
@@ -42,6 +40,13 @@ QJsonObject LatexFileParser::parse(QString &filePath)
     QJsonDocument resultJson = QJsonDocument::fromJson(resultFuture.result().toUtf8());
     return resultJson.object();
 
+}
+
+bool LatexFileParser::canParse(QString &filePath)
+{
+    QFileInfo fileInfo(filePath);
+    QString suffix = fileInfo.suffix();
+    return (suffix.compare("tex", Qt::CaseSensitivity::CaseInsensitive) == 0);
 }
 
 
