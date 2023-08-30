@@ -4,24 +4,21 @@
 //(i.e. store currently open project)
 //triggered by ui to make and destroy project objects
 
-//consider making this singleton
 #include "project.h"
-#include "pythonuser.h"
-#include "pythonthread.h"
+#include "projecttools.h"
 #include <QObject>
 
-class ProjectManager : public QObject, public PythonUser
+class ProjectManager : public QObject
 {
     Q_OBJECT
 public:
-    explicit ProjectManager(PythonThread *pythonThread, QObject *parent = nullptr);
+    ProjectManager(ProjectTools* tools, QObject *parent = nullptr);
 
     bool isAProjectOpen();
 
-    Project* currentProject = nullptr;
 
 Q_SIGNALS:
-    void projectOpened();
+    void projectOpened(QString );
     void projectClosed();
 
 public Q_SLOTS:
@@ -29,7 +26,10 @@ public Q_SLOTS:
     void openProjectRequested(QString& pathToOpenFile);
     void closeProjectRequested();
 
+
 private:
+    Project* currentProject = nullptr;
+    ProjectTools* tools;
 
 };
 

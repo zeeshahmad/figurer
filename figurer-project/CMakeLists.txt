@@ -28,13 +28,13 @@ set(PROJECT_SOURCES
         codeeditor.cpp codeeditor.h
         figureview.h figureview.cpp
         statuswidget.h statuswidget.cpp
+        projecttools.h projecttools.cpp
         project.h project.cpp
         projectfileio.h projectfileio.cpp
         iexternalfileparser.h iexternalfileparser.cpp
         latexfileparser.h latexfileparser.cpp
         projectmanager.h projectmanager.cpp
-        externalfile.h externalfile.cpp
-        externalfileparserchooser.h externalfileparserchooser.cpp
+        externalfilescanner.h externalfilescanner.cpp
         pythonthread.h pythonthread.cpp
         pythonuser.h pythonuser.cpp
 )

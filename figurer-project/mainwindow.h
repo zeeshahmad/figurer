@@ -7,6 +7,7 @@
 #include <QFile>
 
 #include "projectmanager.h"
+#include "projecttools.h"
 #include "pythonthread.h"
 #include "statuswidget.h"
 #include <pybind11/embed.h>
@@ -31,6 +32,7 @@ public:
 
     PythonThread *pythonThread;
 
+
 Q_SIGNALS:
     void requestNewProject(QString&, QString&);
     void requestOpenProject(QString&);
@@ -43,7 +45,8 @@ private Q_SLOTS:
     void updateEnabledStates();
 
 private:
-    ProjectManager projectManager;
+    ProjectTools *tools;
+    ProjectManager *projectManager;
 
     StatusWidget* statusWidget;
 
