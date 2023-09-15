@@ -20,37 +20,53 @@ find_package(Python COMPONENTS Interpreter Development)
 
 file(COPY ${PROJECT_SOURCE_DIR}/texsoup DESTINATION python)
 
+set(PROJECT_HEADERS
+    include/app.h
+    include/mainwindow.h
+    include/codeeditor.h
+    include/figureview.h
+    include/statuswidget.h
+    include/projecttools.h
+    include/project.h
+    include/projectfileio.h
+    include/iexternalfileparser.h
+    include/latexfileparser.h
+    include/projectmanager.h
+    include/externalfilescanner.h
+    include/pythonthread.h
+    include/pythonuser.h
+)
+
 set(PROJECT_SOURCES
-        main.cpp
-        app.h app.cpp
-        mainwindow.cpp mainwindow.h
-        mainwindow.ui
-        codeeditor.cpp codeeditor.h
-        figureview.h figureview.cpp
-        statuswidget.h statuswidget.cpp
-        projecttools.h projecttools.cpp
-        project.h project.cpp
-        projectfileio.h projectfileio.cpp
-        iexternalfileparser.h iexternalfileparser.cpp
-        latexfileparser.h latexfileparser.cpp
-        projectmanager.h projectmanager.cpp
-        externalfilescanner.h externalfilescanner.cpp
-        pythonthread.h pythonthread.cpp
-        pythonuser.h pythonuser.cpp
+    app.cpp
+    mainwindow.cpp
+    mainwindow.ui
+    codeeditor.cpp
+    figureview.cpp
+    statuswidget.cpp
+    projecttools.cpp
+    project.cpp
+    projectfileio.cpp
+    iexternalfileparser.cpp
+    latexfileparser.cpp
+    projectmanager.cpp
+    externalfilescanner.cpp
+    pythonthread.cpp
+    pythonuser.cpp
 )
 
 add_subdirectory(QCodeEditor)
 add_subdirectory(pybind11)
 
 # FIGURER LIBRARY
-qt_add_library(figurer-lib SHARED ${PROJECT_SOURCES})
+qt_add_library(figurer-lib SHARED ${PROJECT_SOURCES} ${PROJECT_HEADERS})
 
-target_include_directories(figurer-lib
-    PRIVATE ${PROJECT_SOURCE_DIR}
+target_include_directories(figurer-lib PRIVATE
+    ${PROJECT_SOURCE_DIR}/include
 )
 
 
-target_link_libraries(figurer-lib PRIVATE
+target_link_libraries(figurer-lib PUBLIC
     Qt${QT_VERSION_MAJOR}::Core
     Qt${QT_VERSION_MAJOR}::Widgets
     QCodeEditor
@@ -59,8 +75,12 @@ target_link_libraries(figurer-lib PRIVATE
 #FIGURER APP
 qt_add_executable(figurer-app
     MANUAL_FINALIZATION
+    main.cpp
     resources/resources.qrc
 )
+
+target_include_directories(figurer-app
+    PRIVATE ${PROJECT_SOURCE_DIR}/include)
 
 target_link_libraries(figurer-app PRIVATE
     figurer-lib)

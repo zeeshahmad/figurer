@@ -2,7 +2,7 @@
 #include <QSignalSpy>
 #include <QDebug>
 
-#include "../statuswidget.h"
+#include "statuswidget.h"
 
 class StatusWidgetTest: public QObject
 {

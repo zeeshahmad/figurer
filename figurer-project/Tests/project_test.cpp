@@ -4,7 +4,7 @@
 #include <QJsonDocument>
 #include <QJsonArray>
 
-#include "../project.h"
+#include "project.h"
 
 
 class MockLatexParser : public QObject, public IExternalFileParser {

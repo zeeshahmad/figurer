@@ -15,7 +15,8 @@ foreach(testFile ${TEST_FILES})
             ../resources/resources.qrc)
 
         add_test(NAME ${testFilename} COMMAND ${testFilename})
-        target_include_directories(${testFilename} PRIVATE "${PROJECT_SOURCE_DIR}/..")
+        target_include_directories(${testFilename} PRIVATE
+            "${PROJECT_SOURCE_DIR}/../include")
         target_link_libraries(${testFilename} PRIVATE
             Qt${QT_VERSION_MAJOR}::Core
             Qt${QT_VERSION_MAJOR}::Widgets
