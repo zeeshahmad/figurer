@@ -6,6 +6,7 @@ set(CMAKE_AUTOMOC ON)
 set(TEST_FILES
         statuswidget_test.cpp
         project_test.cpp
+        projectfileio_test.cpp
 )
 
 foreach(testFile ${TEST_FILES})
