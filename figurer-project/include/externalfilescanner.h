@@ -16,6 +16,7 @@ public:
     QList<QString> scan(QString filePath);
 
 Q_SIGNALS:
+    void error_nosuitableparser(QString);
 
 public Q_SLOTS:
     void addParser(IExternalFileParser *parser);

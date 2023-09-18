@@ -18,10 +18,12 @@ ExternalFileScanner::~ExternalFileScanner()
 
 QList<QString> ExternalFileScanner::scan(QString filePath)
 {
-//    assignParser(filePath);
+    QStringList data;
     IExternalFileParser* parser = chooseParser(filePath);
-    QJsonObject updatedInfo = parser->parse(filePath);
-    QList<QString> data = updatedInfo["includegraphics"].toVariant().toStringList();
+    if (parser) {
+        QJsonObject updatedInfo = parser->parse(filePath);
+        data = updatedInfo["includegraphics"].toVariant().toStringList();
+    }
     return data;
 }
 
@@ -47,8 +49,8 @@ IExternalFileParser *ExternalFileScanner::chooseParser(QString filePath)
         }
     }
     if (chosen == nullptr) {
-        qInfo() << "ExternalFileScanner could not choose a suitable parser for file: "
-                << filePath;
+
+        Q_EMIT error_nosuitableparser(QString("Could not choose a suitable parser for file: %1").arg(filePath));
     }
     return chosen;
 }
