@@ -17,7 +17,7 @@ bool ProjectManager::isAProjectOpen()
 void ProjectManager::createProjectRequested(QString& pathToNewFile, QString& pathToExternalFile)
 {
     if (isAProjectOpen()){
-        qWarning() << "Can't create a new project when another project is already open!";
+        Q_EMIT error_projectalreadyopen("Can't create a new project when another project is already open!");
     } else {
         Project::NewFileParams params;
         params.projectFilePath = pathToNewFile;
@@ -30,7 +30,7 @@ void ProjectManager::createProjectRequested(QString& pathToNewFile, QString& pat
 void ProjectManager::openProjectRequested(QString& openedFilePath)
 {
     if (isAProjectOpen()){
-        qWarning() << "Can't open a project when another project is already open!";
+        Q_EMIT error_projectalreadyopen("Can't open a project when another project is already open!");
 
     } else {
         Project::ExistingFileParams params;
@@ -48,6 +48,6 @@ void ProjectManager::closeProjectRequested()
         Q_EMIT projectClosed();
     }
     else {
-        qWarning() <<"No project is open to be able to close!";
+        Q_EMIT error_noprojecttoclose("No project is open to be able to close!");
     }
 }

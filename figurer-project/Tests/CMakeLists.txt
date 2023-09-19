@@ -8,6 +8,7 @@ set(TEST_FILES
         project_test.cpp
         projectfileio_test.cpp
         externalfilescanner_test.cpp
+        projectmanager_test.cpp
 )
 
 foreach(testFile ${TEST_FILES})

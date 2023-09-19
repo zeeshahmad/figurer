@@ -21,6 +21,10 @@ Q_SIGNALS:
     void projectOpened(QString );
     void projectClosed();
 
+    void error_projectalreadyopen(QString);
+    void error_noprojecttoclose(QString);
+
+
 public Q_SLOTS:
     void createProjectRequested(QString& pathToNewFile, QString& pathToExternalFile);
     void openProjectRequested(QString& pathToOpenFile);
