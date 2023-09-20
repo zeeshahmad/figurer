@@ -1,4 +1,4 @@
-# This Python file uses the following encoding: utf-8
+# This Python file is for latexfileparser cpp class, whose tests also test this
 '''
 args expressions:
     1: path to app executable containing python/texsoup directory
@@ -18,12 +18,18 @@ import json
 
 
 def scanDocument():
-    soup = TexSoup.TexSoup(r''' %2 ''')
-    includegraphics = [ig.args[-1].string for ig in soup.find_all('includegraphics')]
-    result = {
-        "includegraphics": includegraphics
-    }
-#    print(result)
+    result = {}
+    try:
+        soup = TexSoup.TexSoup(r''' %2 ''')
+        includegraphics = [str(ig.args[-1].string) for ig in soup.find_all('includegraphics')]
+        includegraphics = list(set(includegraphics)) #remove / ignore duplicates
+        result = {
+            "includegraphics": includegraphics
+        }
+    except EOFError as e:
+        result = {
+            "error": f"EOFError: {e}"
+        }
     return json.dumps(result)
 
 

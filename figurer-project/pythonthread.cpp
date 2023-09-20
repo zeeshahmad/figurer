@@ -17,6 +17,15 @@ PythonThread::PythonThread()
     this->setObjectName("python thread");
 }
 
+PythonThread::~PythonThread()
+{
+    if (isRunning()){
+        requestInterruption();
+        quit();
+        wait();
+    }
+}
+
 void PythonThread::run()
 {
     py::scoped_interpreter guard{};
@@ -42,10 +51,11 @@ void PythonThread::run()
 //                          Qt::QueuedConnection, evalResult);
                 }
             } catch( std::exception &e) {
-                qWarning()<<"some shit happend during python: " << e.what();
-//                qWarning() << "this is the code:"<<nextBlockOfCode.content;
+                std::exception_ptr e_ptr = std::current_exception();
+                qWarning()<<"std::exception whilst python execution: " << e.what();
+                nextBlockOfCode.promise->setException(e_ptr);
             } catch (...) {
-                qWarning() << "Some bizzare shit happened when trying to run python code";
+                qWarning() << "Unknown exception whilst python execution";
             }
             if (!loopLocker.isLocked()) loopLocker.relock();
             nextBlockOfCode.promise->finish();

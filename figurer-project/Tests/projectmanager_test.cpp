@@ -10,14 +10,14 @@ class DummyParser: public IExternalFileParser
 {
 public:
     QList<QString> parseCalls;
-    QJsonObject parse(QString& filePath) {
+    QJsonObject parse(const QString& filePath) {
         parseCalls.append(filePath);
         return QJsonDocument::fromJson(QString(R"(
             {"includegraphics":["item1", "item2", "item3"]}
         )").toUtf8()).object();
     }
 
-    bool canParse(QString& filePath) {
+    bool canParse(const QString& filePath) {
         return !filePath.contains("invalidtype");
     }
 };

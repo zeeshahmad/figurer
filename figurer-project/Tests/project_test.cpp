@@ -14,7 +14,7 @@ public:
 
     }
 
-    QJsonObject parse(QString& filePath) {
+    QJsonObject parse(const QString& filePath) {
         QJsonObject ret;
         ret["includegraphics"] =
             QJsonArray::fromStringList(
@@ -23,7 +23,7 @@ public:
         return ret;
     }
 
-    bool canParse(QString &filePath) {
+    bool canParse(const QString &filePath) {
         return true;
     }
 
