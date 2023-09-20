@@ -1,4 +1,4 @@
-# This Python file is for latexfileparser cpp class, whose tests also test this
+# This Python file is for latexfileparser cpp class
 '''
 args expressions:
     1: path to app executable containing python/texsoup directory
@@ -7,10 +7,9 @@ args expressions:
 
 def addTexSoupToPath():
     import sys
-    texSoupPath = r'%1\python\texsoup'
-#    texSoupPath = r'C:\Users\zeeshan\figurer\build-figurer-project-Desktop_Qt_6_5_1_MinGW_64_bit-Debug\python\texsoup'
+    texSoupPath = r'%1/python/texsoup'
     if texSoupPath not in sys.path:
-        sys.path.append(texSoupPath) #prepend?
+        sys.path.insert(0, texSoupPath)
 addTexSoupToPath()
 
 import TexSoup
