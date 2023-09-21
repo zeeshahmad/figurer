@@ -56,12 +56,13 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
-    if (pythonThread && pythonThread->isRunning()) {
-        pythonThread->requestInterruption();
-        pythonThread->quit();
-        pythonThread->wait();
-    }
-    delete pythonThread;
+//    if (pythonThread && pythonThread->isRunning()) {
+//        pythonThread->requestInterruption();
+//        pythonThread->quit();
+//        pythonThread->wait();
+//    }
+//    delete pythonThread;
+    if (pythonThread) delete pythonThread;
     delete ui;
 }
 

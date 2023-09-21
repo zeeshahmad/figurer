@@ -31,6 +31,7 @@ public:
     };
 
     explicit PythonThread();
+    ~PythonThread();
 
     void run();
     QFuture<QString> queueCode(Code& codeBlock);

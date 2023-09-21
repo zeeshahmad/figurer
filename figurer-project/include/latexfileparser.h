@@ -14,9 +14,15 @@ class LatexFileParser: public QObject, public IExternalFileParser, public Python
 public:
     LatexFileParser(PythonThread*pt);
 
-    QJsonObject parse(QString& filePath);
+    QJsonObject parse(const QString& filePath);
 
-    bool canParse(QString& filePath);
+    bool canParse(const QString &filePath);
+
+Q_SIGNALS:
+    void error_latexfilecouldnotopen(QString);
+    void error_couldnotopenpythoncode(QString);
+    void error_latexerror(QString);
+
 
 public Q_SLOTS:
 };
