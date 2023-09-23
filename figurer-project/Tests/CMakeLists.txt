@@ -10,6 +10,7 @@ set(TEST_FILES
         externalfilescanner_test.cpp
         projectmanager_test.cpp
         latexfileparser_test.cpp
+        pythonthread_test.cpp
 )
 
 foreach(testFile ${TEST_FILES})
