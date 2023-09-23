@@ -6,6 +6,7 @@
 #include <QSharedPointer>
 #include <string>
 #include <QFuture>
+#include <QVariant>
 
 #include "pybind11/embed.h"
 
@@ -18,7 +19,7 @@ PythonThread::PythonThread()
 }
 
 PythonThread::~PythonThread()
-{
+{    
     if (isRunning()){
         requestInterruption();
         quit();
@@ -30,57 +31,81 @@ void PythonThread::run()
 {
     py::scoped_interpreter guard{};
     qInfo() << "Starting python thread loop";
-//    auto pylocals = py::dict();
     while (!isInterruptionRequested()) {
         QMutexLocker loopLocker(&loopMutex);
         bool isThereCode = !pythonQueue.isEmpty();
         if (isThereCode) {
-            PythonThread::Code nextBlockOfCode = pythonQueue.takeFirst();
-            nextBlockOfCode.promise->start();
-            loopLocker.unlock();
+            PythonThread::Code* code = pythonQueue.takeFirst();
+            const std::string rawCode = code->content.toStdString();
             try {
-                py::exec(nextBlockOfCode.content.toStdString());
+                loopLocker.unlock();
+                py::exec(rawCode);
                 loopLocker.relock();
-                std::string evalResult_std(py::eval(nextBlockOfCode.stringVarName).cast<std::string>());
-                QSharedPointer<QString> evalResult = QSharedPointer<QString>::create(evalResult_std.c_str());
-                if (nextBlockOfCode.callingObject) {
-                    if (nextBlockOfCode.callbackName == nullptr) qFatal() << "No callback specified but calling object is not null.";
-                    if (nextBlockOfCode.stringVarName == nullptr) qFatal() << "No callback python string var specified but calling object is not null.";
-                    nextBlockOfCode.promise->addResult(QString(evalResult_std.c_str()));
-//                    QMetaObject::invokeMethod(nextBlockOfCode.callingObject, nextBlockOfCode.callbackName,
-//                          Qt::QueuedConnection, evalResult);
-                }
+                processCodeResult(code);
             } catch( std::exception &e) {
-                std::exception_ptr e_ptr = std::current_exception();
                 qWarning()<<"std::exception whilst python execution: " << e.what();
-                nextBlockOfCode.promise->setException(e_ptr);
+                if (!loopLocker.isLocked()) loopLocker.relock();
+                code->error = QString("std::exception whilst python execution: %1").arg(e.what());
             } catch (...) {
-                qWarning() << "Unknown exception whilst python execution";
+                qWarning() << "Unknown exception whilst python execution!";
             }
             if (!loopLocker.isLocked()) loopLocker.relock();
-            nextBlockOfCode.promise->finish();
+            code->promise->finish();
         }
+    }
+    qInfo() << "Ending python thread loop";
+}
+
+void PythonThread::processCodeResult(PythonThread::Code *code)
+{
+    const QString& pythonVarName = code->stringVarName;
+    std::string typeEvalCode = QString("type(%1).__name__")
+                                   .arg(pythonVarName).toStdString();
+    QString varType(py::eval(typeEvalCode).cast<std::string>().c_str());
+
+    if (varType == "int") {
+        int var = py::eval(pythonVarName.toStdString()).cast<int>();
+        code->promise->addResult(var);
+    } else if (varType == "str") {
+        QString var(py::eval(pythonVarName.toStdString()).cast<std::string>().c_str());
+        code->promise->addResult(QString(var));
+    } else {
+        code->error = QString("Could not convert type %1 from python code").arg(varType);
     }
 }
 
-QFuture<QString> PythonThread::queueCode(PythonThread::Code& codeBlock)
+void PythonThread::addToQueue(PythonThread::Code& codeBlock, PythonThread::Watcher* watcherForConnection)
 {
-    QSharedPointer<QPromise<QString>> promise = QSharedPointer<QPromise<QString>>::create();
-    qInfo() << "Queueing code";
-    codeBlock.promise = promise;
+    codeBlock.promise = QSharedPointer<QPromise<QVariant>>::create();
+    if (watcherForConnection != nullptr) watcherForConnection->setFuture(codeBlock.promise->future());
+    codeBlock.promise->start();
     mutex.lock();
-    pythonQueue.append(codeBlock);
+    qInfo() << QString("Queueing code with tag '%2' in position %1").arg(pythonQueue.count()).arg(codeBlock.tag);
+    pythonQueue.append(&codeBlock);
     mutex.unlock();
-    return promise->future();
 }
 
-void PythonThread::cancelCodesWithTag(QString tag)
+void PythonThread::cancelCodesWithTag(const QString& tag)
 {
     QMutexLocker locker(&mutex);
-    QMutableListIterator<PythonThread::Code> i(pythonQueue);
+    QMutableListIterator<PythonThread::Code*> i(pythonQueue);
     while(i.hasNext()) {
-        if(i.next().tag.compare(tag, Qt::CaseSensitivity::CaseInsensitive)==0) {
+        PythonThread::Code *code = i.next();
+        if(code->tag.compare(tag, Qt::CaseSensitivity::CaseInsensitive)==0) {
             i.remove();
+            code->error = QString("Cancelled");
+            code->promise->finish();
         }
     }
+}
+
+const bool PythonThread::Code::successAfterWaiting()
+{
+    promise->future().waitForFinished();
+    return error == "0";
+}
+
+const QVariant PythonThread::Code::result() const
+{
+    return promise->future().result();
 }

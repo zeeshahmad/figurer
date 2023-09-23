@@ -38,13 +38,12 @@ QJsonObject LatexFileParser::parse(const QString &filePath)
     }
 
 
-    PythonThread::Code code(pythonScanCode.arg(QDir::currentPath(),latexstring), "latexfileparser",
-        this, "receiveScanResult", "scan_result");
+    PythonThread::Code code(pythonScanCode.arg(QDir::currentPath(),latexstring), "scan_result");
 
-    QFuture<QString> resultFuture = pythonThread->queueCode(code);
-    resultFuture.waitForFinished();
-    qInfo() << "future finished: " << resultFuture.result();
-    resultJson = QJsonDocument::fromJson(resultFuture.result().toUtf8());
+    pythonThread->addToQueue(code);
+    QString resultString = code.result().toString();
+    qInfo() << "Parsing python finished: " << resultString;
+    resultJson = QJsonDocument::fromJson(resultString.toUtf8());
 
     if (resultJson.object().contains("error")) {
         QString latexerror = resultJson.object()["error"].toString();
