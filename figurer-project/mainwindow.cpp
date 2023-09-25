@@ -5,13 +5,8 @@
 #include <QThread>
 #include <QMessageBox>
 
-#include "latexfileparser.h"
-#include "pythonthread.h"
-#include "statuswidget.h"
 
-#include <memory>
-#include <string>
-#include <iostream>
+#include "statuswidget.h"
 
 #include <QByteArray>
 #include <QImage>
@@ -20,15 +15,8 @@
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent),
-        ui(new Ui::MainWindow),
-        pythonThread{new PythonThread}
+        ui(new Ui::MainWindow)
 {
-
-    ExternalFileScanner *scanner = new ExternalFileScanner(this);
-    scanner->addParser(new LatexFileParser(pythonThread)); //latexfileparser leak!
-    ProjectFileIO *io = new ProjectFileIO(this);
-    tools = new ProjectTools(io, scanner, this);
-    projectManager = new ProjectManager(tools, this);
 
     ui->setupUi(this);
 
@@ -41,28 +29,11 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->openButton, SIGNAL(clicked()), this, SLOT(handleOpenBtn()));
     connect(ui->closeButton, SIGNAL(clicked()), this, SLOT(handleCloseBtn()));
 
-    connect(this, SIGNAL(requestNewProject(QString&,QString&)), projectManager, SLOT(createProjectRequested(QString&,QString&)));
-    connect(this, SIGNAL(requestOpenProject(QString&)), projectManager, SLOT(openProjectRequested(QString&)));
-    connect(this, SIGNAL(requestCloseProject()), projectManager, SLOT(closeProjectRequested()));
-
-    connect(projectManager, SIGNAL(projectOpened(QString)), this, SLOT(updateEnabledStates()));
-    connect(projectManager, SIGNAL(projectClosed()), this, SLOT(updateEnabledStates()));
-
-    updateEnabledStates();
-
-    pythonThread->start();
-
+    updateEnabledStates(false);
 }
 
 MainWindow::~MainWindow()
 {
-//    if (pythonThread && pythonThread->isRunning()) {
-//        pythonThread->requestInterruption();
-//        pythonThread->quit();
-//        pythonThread->wait();
-//    }
-//    delete pythonThread;
-    if (pythonThread) delete pythonThread;
     delete ui;
 }
 
@@ -82,9 +53,7 @@ void MainWindow::handleNewBtn()
     if (externalFilePath.isNull()) return;
     qInfo() <<"externalFilePath: "<< externalFilePath;
     Q_EMIT requestNewProject(saveFilePath, externalFilePath);
-
 }
-
 
 
 void MainWindow::handleOpenBtn()
@@ -93,7 +62,6 @@ void MainWindow::handleOpenBtn()
     if (openFilePath.isNull()) return; //user cancelled dialog
     qInfo() << "openFilePath: " << openFilePath;
     Q_EMIT requestOpenProject(openFilePath);
-
 }
 
 void MainWindow::handleCloseBtn()
@@ -101,9 +69,8 @@ void MainWindow::handleCloseBtn()
     Q_EMIT requestCloseProject();
 }
 
-void MainWindow::updateEnabledStates()
+void MainWindow::updateEnabledStates(bool projectOpen)
 {
-    bool projectOpen = projectManager->isAProjectOpen();
     ui->openButton->setEnabled(!projectOpen);
     ui->newButton->setEnabled(!projectOpen);
     ui->closeButton->setEnabled(projectOpen);

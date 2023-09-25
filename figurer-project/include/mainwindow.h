@@ -6,14 +6,7 @@
 #include <QTextEdit>
 #include <QFile>
 
-#include "projectmanager.h"
-#include "projecttools.h"
-#include "pythonthread.h"
 #include "statuswidget.h"
-#include <pybind11/embed.h>
-#include <memory>
-
-namespace py=pybind11;
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -30,26 +23,19 @@ public:
 
     static void show_error(const QString& message);
 
-    PythonThread *pythonThread;
-
-
 Q_SIGNALS:
     void requestNewProject(QString&, QString&);
     void requestOpenProject(QString&);
     void requestCloseProject();
 
+public Q_SLOTS:
+    void updateEnabledStates(bool projectOpen);
 private Q_SLOTS:
     void handleNewBtn();
     void handleOpenBtn();
     void handleCloseBtn();
-    void updateEnabledStates();
 
 private:
-    ProjectTools *tools;
-    ProjectManager *projectManager;
-
     StatusWidget* statusWidget;
-
-    void pythonTestFunc(py::dict*);
 };
 #endif // MAINWINDOW_H
