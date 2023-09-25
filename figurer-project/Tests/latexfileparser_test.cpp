@@ -63,7 +63,10 @@ void LatexFileParserTest::findAllIncludeGraphicsTagsInLatexFile()
     LatexFileParser parser(&pt);
     pt.start();
 
-    QJsonObject parsed = parser.parse(latexfile.fileName());
+    QJsonObject parsed;
+    QBENCHMARK {
+        parsed = parser.parse(latexfile.fileName());
+    }
     QStringList listoffigures = parsed["includegraphics"].toVariant().toStringList();
 
     QVERIFY(listoffigures.contains("figure.png"));
@@ -106,7 +109,10 @@ void LatexFileParserTest::emitErrorWhenLatexError()
     pt.start();
 
     QSignalSpy spy(&parser, SIGNAL(error_latexerror(QString)));
-    QJsonObject parsed = parser.parse(latexfile.fileName());
+    QJsonObject parsed;
+    QBENCHMARK {
+        parsed = parser.parse(latexfile.fileName());
+    }
     QStringList listoffigures = parsed["includegraphics"].toVariant().toStringList();
     QString errortext = spy.first().first().toString();
 

@@ -39,7 +39,10 @@ result = str(sum)
     )";
     PythonThread::Code code(codestring, "result");
     pt.addToQueue(code);
-    QString result = code.result().toString();
+    QString result;
+    QBENCHMARK {
+        result = code.result().toString();
+    }
 
 
     QCOMPARE(result, "28");
@@ -55,7 +58,10 @@ result = sum
     )";
     PythonThread::Code code(codestring, "result");
     pt.addToQueue(code);
-    int result = code.result().toInt();
+    int result = -1;
+    QBENCHMARK {
+        result = code.result().toInt();
+    }
 
     QCOMPARE(result, 28);
 }
@@ -139,8 +145,6 @@ void PythonThreadTest::queueAndGetTenResults()
     QList<PythonThread::Code*> codes;
     for (int i=0; i< 10; i++) {
         QString codestring = QString(R"(
-import time
-time.sleep(.1)
 result = %1**3
     )").arg(i);
 
@@ -149,11 +153,18 @@ result = %1**3
         codes.append(code);
     }
 
+    QList<int> results;
+
+    QBENCHMARK {
+        for (int i=0; i<10; i++) {
+            PythonThread::Code* code = codes.at(i);
+            results.append( code->result().toInt() );
+        }
+    }
+
     for (int i=0; i<10; i++) {
-        PythonThread::Code* code = codes.at(i);
-        int result = code->result().toInt();
-        delete code;
-        QCOMPARE(result, i*i*i);
+        delete codes.at(i);
+        QCOMPARE(results.at(i), i*i*i);
     }
 }
 
