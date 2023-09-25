@@ -43,7 +43,7 @@ void PythonThread::run()
                 loopLocker.relock();
                 processCodeResult(code);
             } catch( std::exception &e) {
-                qWarning()<<"std::exception whilst python execution: " << e.what();
+                qInfo()<<"std::exception whilst python execution: " << e.what();
                 if (!loopLocker.isLocked()) loopLocker.relock();
                 code->error = QString("std::exception whilst python execution: %1").arg(e.what());
             } catch (...) {
