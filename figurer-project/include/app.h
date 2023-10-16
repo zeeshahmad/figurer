@@ -3,11 +3,12 @@
 
 #include <QApplication>
 #include <QThread>
+#include <QScopedPointer>
 
 #include "mainwindow.h"
 #include "projecttools.h"
 #include "projectmanager.h"
-#include "pythonthread.h"
+#include "pycode.h"
 
 class App : public QApplication
 {
@@ -17,15 +18,18 @@ public:
     ~App();
     void setMainWindow(MainWindow* mainWindow);
 
-    PythonThread *pythonThread;
+    pycode::Worker *pythonWorker;
 
 Q_SIGNALS:
 
 public Q_SLOTS:
+    void sendEditorCodeToPython(QString);
+    void sendFigureToMainWindow(const QString &figureBase64);
 
 private:
     ProjectTools *tools;
     ProjectManager *projectManager;
+    MainWindow *mainWindow;
 };
 
 #endif // APP_H

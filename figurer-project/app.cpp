@@ -4,28 +4,32 @@
 #include "latexfileparser.h"
 #include "mainwindow.h"
 #include "projectmanager.h"
-#include "pythonthread.h"
+#include "pycode.h"
+
+#include <QScopedPointer>
 
 App::App(int argc, char *argv[])
     :QApplication(argc,argv),
-    pythonThread{new PythonThread}
+    pythonWorker{new pycode::Worker}
 {
     ExternalFileScanner *scanner = new ExternalFileScanner(this);
-    scanner->addParser(new LatexFileParser(pythonThread)); //latexfileparser leak!
+    scanner->addParser(new LatexFileParser(pythonWorker)); //latexfileparser leak!
     ProjectFileIO *io = new ProjectFileIO(this);
     tools = new ProjectTools(io, scanner, this);
     projectManager = new ProjectManager(tools, this);
 
-    pythonThread->start();
+    pythonWorker->start();
 }
 
 App::~App()
 {
-    if (pythonThread) delete pythonThread;
+    delete pythonWorker;
 }
 
 void App::setMainWindow(MainWindow *mainWindow)
 {
+    connect(mainWindow->statusWidget, SIGNAL(cooldownCompleted(QString)),this, SLOT(sendEditorCodeToPython(QString)));
+
     connect(mainWindow, SIGNAL(requestNewProject(QString&,QString&)), projectManager, SLOT(createProjectRequested(QString&,QString&)));
     connect(mainWindow, SIGNAL(requestOpenProject(QString&)), projectManager, SLOT(openProjectRequested(QString&)));
     connect(mainWindow, SIGNAL(requestCloseProject()), projectManager, SLOT(closeProjectRequested()));
@@ -36,5 +40,20 @@ void App::setMainWindow(MainWindow *mainWindow)
     connect(projectManager, &ProjectManager::projectClosed, mainWindow, [=]() {
         mainWindow->updateEnabledStates(projectManager->isAProjectOpen());
     });
+    this->mainWindow = mainWindow;
 }
 
+void App::sendEditorCodeToPython(QString newPythonCode)
+{
+    qInfo() << "send code to python";
+    pythonWorker->cancelCodesWithTag("editor");
+    pythonWorker->enqueue(newPythonCode, "figurer64", "editor")
+        .then([this](pycode::Result result){
+            sendFigureToMainWindow(result.toString());
+        });
+}
+
+void App::sendFigureToMainWindow(const QString& figureBase64)
+{
+    mainWindow->updateFigureView(figureBase64);
+}

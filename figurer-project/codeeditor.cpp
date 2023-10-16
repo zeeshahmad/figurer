@@ -6,13 +6,9 @@
 
 #include <QIODevice>
 
-
-
 CodeEditor::CodeEditor(QWidget *parent): QCodeEditor(parent)
 {
-    qInfo("constructor!");
     initData();
-
 
     this->setSyntaxStyle(syntax_style);
     this->setCompleter(completer);
@@ -25,7 +21,7 @@ CodeEditor::CodeEditor(QWidget *parent): QCodeEditor(parent)
 void CodeEditor::onTextChanged()
 {
     pythonCode = QString(this->toPlainText());
-    Q_EMIT codeChanged(&pythonCode);
+    Q_EMIT codeChanged(pythonCode);
 }
 
 void CodeEditor::initData()

@@ -21,7 +21,7 @@ private Q_SLOTS:
     void onTextChanged();
 
 Q_SIGNALS:
-    void codeChanged(QString *);
+    void codeChanged(QString);
 
 private:
     void initData();

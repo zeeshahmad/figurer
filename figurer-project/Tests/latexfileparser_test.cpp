@@ -24,7 +24,7 @@ private:
 
 void LatexFileParserTest::canParseCorrectFileExtension()
 {
-    PythonThread pt;
+    pycode::Worker pt;
     LatexFileParser parser(&pt);
 
     bool goodResult = parser.canParse("path/file.TEX")
@@ -59,7 +59,7 @@ void LatexFileParserTest::findAllIncludeGraphicsTagsInLatexFile()
     )").toUtf8());
     latexfile.close();
 
-    PythonThread pt;
+    pycode::Worker pt;
     LatexFileParser parser(&pt);
     pt.start();
 
@@ -76,7 +76,7 @@ void LatexFileParserTest::findAllIncludeGraphicsTagsInLatexFile()
 
 void LatexFileParserTest::emitErrorWhenLatexFileDoesntExist()
 {
-    PythonThread pt;
+    pycode::Worker pt;
     LatexFileParser parser(&pt);
     pt.start();
 
@@ -101,7 +101,7 @@ void LatexFileParserTest::emitErrorWhenLatexError()
     )").toUtf8());
     latexfile.close();
 
-    PythonThread pt;
+    pycode::Worker pt;
     LatexFileParser parser(&pt);
     pt.start();
 
