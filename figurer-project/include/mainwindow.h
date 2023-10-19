@@ -31,7 +31,7 @@ Q_SIGNALS:
 
 public Q_SLOTS:
     void updateEnabledStates(bool projectOpen);
-    void updateFigureView(QString figureBase64);
+    void updateFigureView(QSharedPointer<QByteArray> figureBase64);
 private Q_SLOTS:
     void handleNewBtn();
     void handleOpenBtn();

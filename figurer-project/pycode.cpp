@@ -94,6 +94,13 @@ namespace pycode {
         } else if (varType == "str") {
             QString var(py::eval(pythonVarName.toStdString()).cast<std::string>().c_str());
             addSuccessToPromise(var, &job->promise);
+        } else if (varType == "bytearray") {
+            py::bytearray var_pybytearray(py::eval(pythonVarName.toStdString()).cast<py::bytearray>());
+            char* data_ptr = PyByteArray_AsString(var_pybytearray.ptr());
+            Py_ssize_t data_size = PyByteArray_Size(var_pybytearray.ptr());
+
+            QByteArray var(data_ptr, data_size);
+            addSuccessToPromise(var, &job->promise);
         } else {
             QString err = QString("Could not convert type %1 from python code").arg(varType);
             addErrorToPromise(err, &job->promise);

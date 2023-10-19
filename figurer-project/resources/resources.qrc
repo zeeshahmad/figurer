@@ -2,5 +2,6 @@
     <qresource prefix="/">
         <file>styles/drakula.xml</file>
         <file>python/scan_latex.py</file>
+        <file>python/figure_image_data.py</file>
     </qresource>
 </RCC>

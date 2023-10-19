@@ -8,6 +8,7 @@
 #include <QPythonCompleter>
 #include <QSyntaxStyle>
 #include <QPythonHighlighter>
+#include <QSharedPointer>
 
 
 class CodeEditor : public QCodeEditor

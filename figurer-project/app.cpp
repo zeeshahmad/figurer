@@ -6,7 +6,6 @@
 #include "projectmanager.h"
 #include "pycode.h"
 
-#include <QScopedPointer>
 
 App::App(int argc, char *argv[])
     :QApplication(argc,argv),
@@ -17,6 +16,8 @@ App::App(int argc, char *argv[])
     ProjectFileIO *io = new ProjectFileIO(this);
     tools = new ProjectTools(io, scanner, this);
     projectManager = new ProjectManager(tools, this);
+
+    importPythonCode();
 
     pythonWorker->start();
 }
@@ -46,14 +47,29 @@ void App::setMainWindow(MainWindow *mainWindow)
 void App::sendEditorCodeToPython(QString newPythonCode)
 {
     qInfo() << "send code to python";
+
+    newPythonCode.prepend(pythonFunctionCode);
+
     pythonWorker->cancelCodesWithTag("editor");
-    pythonWorker->enqueue(newPythonCode, "figurer64", "editor")
+    pythonWorker->enqueue(newPythonCode, "figure_image_data", "editor")
         .then([this](pycode::Result result){
-            sendFigureToMainWindow(result.toString());
+            QSharedPointer<QByteArray> figureImageData = QSharedPointer<QByteArray>::create(result.toByteArray());
+            sendFigureToMainWindow(figureImageData);
         });
 }
 
-void App::sendFigureToMainWindow(const QString& figureBase64)
+void App::sendFigureToMainWindow(QSharedPointer<QByteArray> figureImageData)
 {
-    mainWindow->updateFigureView(figureBase64);
+    mainWindow->updateFigureView(figureImageData);
+}
+
+void App::importPythonCode()
+{
+    QFile figureImageDataCodeFile(":/python/figure_image_data.py");
+    if (!figureImageDataCodeFile.open(QIODevice::ReadOnly|QIODevice::Text)) {
+        qInfo()<< "Could not open figure image data file to append python function";
+        return;
+    }
+    pythonFunctionCode = QString::fromUtf8(figureImageDataCodeFile.readAll());
+    figureImageDataCodeFile.close();
 }

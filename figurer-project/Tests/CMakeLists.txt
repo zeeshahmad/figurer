@@ -12,6 +12,7 @@ set(TEST_FILES
         latexfileparser_test.cpp
         codeeditor_test.cpp
         pycode_test.cpp
+        figureview_test.cpp
 )
 
 foreach(testFile ${TEST_FILES})

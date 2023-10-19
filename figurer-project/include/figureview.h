@@ -11,7 +11,7 @@ public:
 
 public Q_SLOTS:
 
-    void showUpdatedFigure(QString &figureBase64);
+    void showUpdatedFigure(QSharedPointer<QByteArray> figureImageData);
 };
 
 #endif // FIGUREVIEW_H

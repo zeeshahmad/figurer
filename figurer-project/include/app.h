@@ -2,8 +2,6 @@
 #define APP_H
 
 #include <QApplication>
-#include <QThread>
-#include <QScopedPointer>
 
 #include "mainwindow.h"
 #include "projecttools.h"
@@ -24,12 +22,15 @@ Q_SIGNALS:
 
 public Q_SLOTS:
     void sendEditorCodeToPython(QString);
-    void sendFigureToMainWindow(const QString &figureBase64);
+    void sendFigureToMainWindow(QSharedPointer<QByteArray> figureImageData);
 
 private:
     ProjectTools *tools;
     ProjectManager *projectManager;
     MainWindow *mainWindow;
+    QString pythonFunctionCode;
+
+    void importPythonCode();
 };
 
 #endif // APP_H

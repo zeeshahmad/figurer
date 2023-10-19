@@ -20,6 +20,8 @@ private Q_SLOTS:
     void getIntResultAsync();
     void getStringResultSync();
     void getStringResultAsync();
+    void getByteArrayResultSync();
+    void getByteArrayResultAsync();
     void getErrorFromPython();
     void incorectPythonVarName();
     void unrecognisedResultType();
@@ -99,6 +101,46 @@ void PycodeTest::getStringResultAsync()
     worker.start();
     spy.wait(2000);
     QCOMPARE(result, "this is a string!");
+    QVERIFY(success);
+}
+
+void PycodeTest::getByteArrayResultSync()
+{
+    pyc::Worker worker;
+    worker.start();
+
+    QString pythoncode("barray = bytearray([0x41, 0x42, 0x43, 0x44])");
+
+    pyc::Result result = worker.enqueue(pythoncode, "barray").result();
+
+    QByteArray barray = result.toByteArray();
+
+    QByteArray expected = "\x41\x42\x43\x44";
+
+    QCOMPARE(barray, expected);
+    QVERIFY(result.success());
+}
+
+void PycodeTest::getByteArrayResultAsync()
+{
+    pyc::Worker worker;
+
+    QFutureWatcher<pyc::Result> watcher;
+    QSignalSpy spy(&watcher, SIGNAL(finished()));
+
+    QString pythoncode("barray = bytearray([0x41, 0x42, 0x43, 0x44])");
+
+
+    QFuture<pyc::Result> future = worker.enqueue(pythoncode, "barray");
+    watcher.setFuture(future);
+    QByteArray barray; bool success;
+    future.then([&barray, &success](pyc::Result res) {
+        barray = res.toByteArray();
+        success = res.success();
+    });
+    worker.start();
+    spy.wait(1000);
+    QCOMPARE(barray, "ABCD");
     QVERIFY(success);
 }
 

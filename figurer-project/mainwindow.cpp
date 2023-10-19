@@ -9,6 +9,7 @@
 #include "statuswidget.h"
 
 #include <QByteArray>
+#include <QSharedPointer>
 #include <QImage>
 #include <QGraphicsPixmapItem>
 
@@ -75,8 +76,8 @@ void MainWindow::updateEnabledStates(bool projectOpen)
     ui->codeEditor->setEnabled(projectOpen);
 }
 
-void MainWindow::updateFigureView(QString figureBase64)
+void MainWindow::updateFigureView(QSharedPointer<QByteArray> figureImageData)
 {
-    ui->figureView->showUpdatedFigure(figureBase64);
+    ui->figureView->showUpdatedFigure(figureImageData);
 }
 

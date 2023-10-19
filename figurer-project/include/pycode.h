@@ -5,6 +5,7 @@
 #include <QThread>
 #include <QList>
 #include <QString>
+#include <QByteArray>
 #include <QSharedPointer>
 #include <QFuture>
 #include <QVariant>
@@ -18,8 +19,10 @@ namespace pycode {
         Result(const QVariant& data): data(data) {}
         Result(const int& data): data(data) {}
         Result(const QString& data): data(data) {}
+        Result(const QByteArray& data): data(data) {}
         const int toInt() const { return data.toInt(); }
         const QString toString() const { return data.toString(); }
+        const QByteArray toByteArray() const { return data.toByteArray(); }
 
         const bool success() const { return error_=="0"; }
         const QString error() const { return error_; }
