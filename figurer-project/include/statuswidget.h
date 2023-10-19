@@ -10,14 +10,14 @@ class StatusWidget : public QWidget
 public:
     explicit StatusWidget(QWidget *parent = nullptr);
 Q_SIGNALS:
-    void cooldownCompleted(QString *);
+    void cooldownCompleted(QString);
 public Q_SLOTS:
-    void restartCooldown(QString *);
+    void restartCooldown(QString);
     void updateBar();
 private:
     QProgressBar *cooldownBar;
     QTimer *timer;
-    QString * pythonCode;
+    QString pythonCode;
 };
 
 #endif // STATUSWIDGET_H

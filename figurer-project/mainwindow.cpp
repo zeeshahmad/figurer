@@ -9,6 +9,7 @@
 #include "statuswidget.h"
 
 #include <QByteArray>
+#include <QSharedPointer>
 #include <QImage>
 #include <QGraphicsPixmapItem>
 
@@ -22,8 +23,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     statusWidget = new StatusWidget(ui->statusbar);
 
-    connect(ui->codeEditor, SIGNAL(codeChanged(QString*)),statusWidget, SLOT(restartCooldown(QString*)));
-    //connect(statusWidget, SIGNAL(cooldownCompleted(QString*)),pythonWorker, SLOT(runPython(QString*)));
+    connect(ui->codeEditor, SIGNAL(codeChanged(QString)),statusWidget, SLOT(restartCooldown(QString)));
 
     connect(ui->newButton, SIGNAL(clicked()), this, SLOT(handleNewBtn()));
     connect(ui->openButton, SIGNAL(clicked()), this, SLOT(handleOpenBtn()));
@@ -55,7 +55,6 @@ void MainWindow::handleNewBtn()
     Q_EMIT requestNewProject(saveFilePath, externalFilePath);
 }
 
-
 void MainWindow::handleOpenBtn()
 {
     QString openFilePath = QFileDialog::getOpenFileName(this, "Open project file", nullptr, "Figurer project (*.json)");
@@ -77,7 +76,8 @@ void MainWindow::updateEnabledStates(bool projectOpen)
     ui->codeEditor->setEnabled(projectOpen);
 }
 
-
-
-
+void MainWindow::updateFigureView(QSharedPointer<QByteArray> figureImageData)
+{
+    ui->figureView->showUpdatedFigure(figureImageData);
+}
 

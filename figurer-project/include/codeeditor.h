@@ -8,6 +8,7 @@
 #include <QPythonCompleter>
 #include <QSyntaxStyle>
 #include <QPythonHighlighter>
+#include <QSharedPointer>
 
 
 class CodeEditor : public QCodeEditor
@@ -21,7 +22,7 @@ private Q_SLOTS:
     void onTextChanged();
 
 Q_SIGNALS:
-    void codeChanged(QString *);
+    void codeChanged(QString);
 
 private:
     void initData();

@@ -15,9 +15,8 @@ StatusWidget::StatusWidget(QWidget *parent)
     connect(timer, &QTimer::timeout, this, &StatusWidget::updateBar);
 }
 
-void StatusWidget::restartCooldown(QString* pythonCode)
+void StatusWidget::restartCooldown(QString pythonCode)
 {
-    //probably producing leaks for Qstring* pythonCode, check!
     this->pythonCode = pythonCode;
     if (timer->isActive()) {
         timer->stop();

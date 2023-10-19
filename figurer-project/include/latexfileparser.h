@@ -12,7 +12,7 @@ class LatexFileParser: public QObject, public IExternalFileParser, public Python
 {
     Q_OBJECT
 public:
-    LatexFileParser(PythonThread*pt);
+    LatexFileParser(pycode::Worker *pw);
 
     QJsonObject parse(const QString& filePath);
 

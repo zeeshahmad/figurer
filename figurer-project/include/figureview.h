@@ -9,9 +9,9 @@ class FigureView : public QLabel
 public:
     FigureView(QWidget *parent = 0);
 
-private Q_SLOTS:
+public Q_SLOTS:
 
-    void showUpdatedFigure(QString &figurebase64);
+    void showUpdatedFigure(QSharedPointer<QByteArray> figureImageData);
 };
 
 #endif // FIGUREVIEW_H

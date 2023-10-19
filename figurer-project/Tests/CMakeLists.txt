@@ -10,7 +10,9 @@ set(TEST_FILES
         externalfilescanner_test.cpp
         projectmanager_test.cpp
         latexfileparser_test.cpp
-        pythonthread_test.cpp
+        codeeditor_test.cpp
+        pycode_test.cpp
+        figureview_test.cpp
 )
 
 foreach(testFile ${TEST_FILES})

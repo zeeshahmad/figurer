@@ -33,7 +33,7 @@ set(PROJECT_HEADERS
     include/latexfileparser.h
     include/projectmanager.h
     include/externalfilescanner.h
-    include/pythonthread.h
+    include/pycode.h
     include/pythonuser.h
 )
 
@@ -51,8 +51,7 @@ set(PROJECT_SOURCES
     latexfileparser.cpp
     projectmanager.cpp
     externalfilescanner.cpp
-    pythonthread.cpp
-    pythonuser.cpp
+    pycode.cpp
 )
 
 add_subdirectory(QCodeEditor)

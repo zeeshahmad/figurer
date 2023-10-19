@@ -8,8 +8,8 @@
 #include <string>
 
 
-LatexFileParser::LatexFileParser(PythonThread *pt)
-    :QObject{nullptr},PythonUser{pt}
+LatexFileParser::LatexFileParser(pycode::Worker *pw)
+    :QObject{nullptr},PythonUser{pw}
 {
 
 }
@@ -37,11 +37,10 @@ QJsonObject LatexFileParser::parse(const QString &filePath)
         return resultJson.object();
     }
 
+    QString code = pythonScanCode.arg(QDir::currentPath(),latexstring);
+    QString resultString = pythonWorker->enqueue(code, "scan_result").result().toString();
+    //todo: checks for success of results are missing here!
 
-    PythonThread::Code code(pythonScanCode.arg(QDir::currentPath(),latexstring), "scan_result");
-
-    pythonThread->addToQueue(code);
-    QString resultString = code.result().toString();
     qInfo() << "Parsing python finished: " << resultString;
     resultJson = QJsonDocument::fromJson(resultString.toUtf8());
 

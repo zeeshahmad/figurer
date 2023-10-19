@@ -20,6 +20,7 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
     Ui::MainWindow *ui;
+    StatusWidget* statusWidget;
 
     static void show_error(const QString& message);
 
@@ -30,12 +31,12 @@ Q_SIGNALS:
 
 public Q_SLOTS:
     void updateEnabledStates(bool projectOpen);
+    void updateFigureView(QSharedPointer<QByteArray> figureBase64);
 private Q_SLOTS:
     void handleNewBtn();
     void handleOpenBtn();
     void handleCloseBtn();
 
 private:
-    StatusWidget* statusWidget;
 };
 #endif // MAINWINDOW_H

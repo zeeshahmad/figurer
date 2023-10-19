@@ -2,13 +2,14 @@
 #define PYTHONUSER_H
 
 
-#include "pythonthread.h"
+#include "pycode.h"
 
 class PythonUser
 {
 public:
-    PythonUser(PythonThread* pythonThread);
-    PythonThread* pythonThread;
+    PythonUser(pycode::Worker * pythonWorker)
+        :pythonWorker{pythonWorker} {}
+    pycode::Worker * pythonWorker;
 };
 
 #endif // PYTHONUSER_H
