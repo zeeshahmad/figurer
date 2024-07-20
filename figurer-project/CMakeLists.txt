@@ -35,6 +35,7 @@ set(PROJECT_HEADERS
     include/externalfilescanner.h
     include/pycode.h
     include/pythonuser.h
+    include/sectionlist.h
 )
 
 set(PROJECT_SOURCES
@@ -52,6 +53,7 @@ set(PROJECT_SOURCES
     projectmanager.cpp
     externalfilescanner.cpp
     pycode.cpp
+    sectionlist.cpp
 )
 
 add_subdirectory(QCodeEditor)

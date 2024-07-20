@@ -9,27 +9,41 @@
 #include <QSyntaxStyle>
 #include <QPythonHighlighter>
 #include <QSharedPointer>
-
+#include <QHash>
+#include <QHashIterator>
 
 class CodeEditor : public QCodeEditor
 {
     Q_OBJECT
 
 public:
-    CodeEditor(QWidget *parent = 0);
+    using BufferData = QHash<QString, QString>;
 
-private Q_SLOTS:
-    void onTextChanged();
+    CodeEditor(QWidget *parent = 0);
+    void overwriteBuffers(const BufferData& newData);
+    QStringList getBufferIds();
+    const QString getBufferText(const QString& bufferId) const;
 
 Q_SIGNALS:
-    void codeChanged(QString);
-
+    void codeChanged(const QString&);
+public Q_SLOTS:
+    void showBuffer(const QString& bufferId);
+private Q_SLOTS:
+    void onTextChanged();
 private:
+    using BufferDataIterator = QHashIterator<QString, QString>;
     void initData();
 
     void loadStyle(QString path);
 
-    QString pythonCode;
+    QHash<QString, QString> buffers;//<tab id, code text>
+    QString visibleBufferId;
+    QString& visibleBufferText();
+    bool visibleBufferExists();
+    void visibleBufferToEmptyId();
+    QString stitchTextForBuffer(const QString& bufferId);
+    QString stitchTextForVisibleBuffer();
+    bool bufferIsFigure(const QString &bufferId);
 
     QVector<QPair<QString, QString>> m_codeSamples;
     QCompleter* completer;

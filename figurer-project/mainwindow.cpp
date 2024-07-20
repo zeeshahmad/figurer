@@ -23,11 +23,13 @@ MainWindow::MainWindow(QWidget *parent)
 
     statusWidget = new StatusWidget(ui->statusbar);
 
-    connect(ui->codeEditor, SIGNAL(codeChanged(QString)),statusWidget, SLOT(restartCooldown(QString)));
+    connect(ui->codeEditor, SIGNAL(codeChanged(QString)),this, SLOT(handleCodeEditorChange(QString)));
 
     connect(ui->newButton, SIGNAL(clicked()), this, SLOT(handleNewBtn()));
     connect(ui->openButton, SIGNAL(clicked()), this, SLOT(handleOpenBtn()));
     connect(ui->closeButton, SIGNAL(clicked()), this, SLOT(handleCloseBtn()));
+
+    connect(ui->sectionList, SIGNAL(sectionSelected(QString)), ui->codeEditor, SLOT(showBuffer(QString)));
 
     updateEnabledStates(false);
 }
@@ -68,12 +70,18 @@ void MainWindow::handleCloseBtn()
     Q_EMIT requestCloseProject();
 }
 
+void MainWindow::handleCodeEditorChange(const QString & code)
+{
+    Q_EMIT requestLiveEditorCycle(code);
+}
+
 void MainWindow::updateEnabledStates(bool projectOpen)
 {
     ui->openButton->setEnabled(!projectOpen);
     ui->newButton->setEnabled(!projectOpen);
     ui->closeButton->setEnabled(projectOpen);
     ui->codeEditor->setEnabled(projectOpen);
+    ui->sectionList->setEnabled(projectOpen);
 }
 
 void MainWindow::updateFigureView(QSharedPointer<QByteArray> figureImageData)

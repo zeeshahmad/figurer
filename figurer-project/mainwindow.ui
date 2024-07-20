@@ -20,71 +20,49 @@
    <string>0</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QPushButton" name="openButton">
-    <property name="geometry">
-     <rect>
-      <x>130</x>
-      <y>10</y>
-      <width>91</width>
-      <height>24</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Open project ...</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="newButton">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>10</y>
-      <width>91</width>
-      <height>24</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>New project ...</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="closeButton">
-    <property name="geometry">
-     <rect>
-      <x>230</x>
-      <y>10</y>
-      <width>80</width>
-      <height>24</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Close project</string>
-    </property>
-   </widget>
    <widget class="QSplitter" name="splitter_2">
     <property name="geometry">
      <rect>
-      <x>40</x>
-      <y>70</y>
-      <width>891</width>
-      <height>541</height>
+      <x>30</x>
+      <y>40</y>
+      <width>971</width>
+      <height>592</height>
      </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
     </property>
     <property name="orientation">
      <enum>Qt::Vertical</enum>
-    </property>
-    <property name="handleWidth">
-     <number>8</number>
     </property>
     <widget class="QSplitter" name="splitter">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
-     <property name="handleWidth">
-      <number>8</number>
-     </property>
-     <property name="childrenCollapsible">
-      <bool>false</bool>
-     </property>
+     <widget class="SectionList" name="sectionList">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>2</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+     </widget>
      <widget class="CodeEditor" name="codeEditor">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
+        <horstretch>4</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>500</width>
+        <height>400</height>
+       </size>
+      </property>
       <property name="autoFillBackground">
        <bool>false</bool>
       </property>
@@ -96,6 +74,18 @@
       </property>
      </widget>
      <widget class="FigureView" name="figureView">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <horstretch>2</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>350</width>
+        <height>400</height>
+       </size>
+      </property>
       <property name="frameShape">
        <enum>QFrame::Panel</enum>
       </property>
@@ -104,7 +94,52 @@
       </property>
      </widget>
     </widget>
-    <widget class="QTextBrowser" name="textBrowser"/>
+    <widget class="QTextBrowser" name="console">
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>250</height>
+      </size>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="">
+    <layout class="QHBoxLayout" name="mainButtonsLayout">
+     <item>
+      <widget class="QPushButton" name="newButton">
+       <property name="text">
+        <string>New project ...</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="openButton">
+       <property name="text">
+        <string>Open project ...</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="closeButton">
+       <property name="text">
+        <string>Close project</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="mainButtonsSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>458</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -139,6 +174,11 @@
    <class>FigureView</class>
    <extends>QLabel</extends>
    <header>figureview.h</header>
+  </customwidget>
+  <customwidget>
+   <class>SectionList</class>
+   <extends>QListWidget</extends>
+   <header>sectionlist.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

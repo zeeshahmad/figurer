@@ -1,9 +1,7 @@
 #include "codeeditor.h"
-//#include "./ui_mainwindow.h"
 #include <QDebug>
 #include <QDir>
 #include <QLabel>
-
 #include <QIODevice>
 
 CodeEditor::CodeEditor(QWidget *parent): QCodeEditor(parent)
@@ -15,13 +13,44 @@ CodeEditor::CodeEditor(QWidget *parent): QCodeEditor(parent)
     this->setHighlighter(highlighter);
 
     connect(this, SIGNAL(textChanged()),this, SLOT(onTextChanged()));
-//    ui->statusLabel->setText(QString("running python"));
+}
+
+void CodeEditor::overwriteBuffers(const BufferData &newData)
+{
+    BufferDataIterator it(newData);
+    while (it.hasNext()) {
+        it.next();
+        buffers[it.key()] = it.value();
+    }
+    if (visibleBufferExists()) {
+        this->setText(visibleBufferText());
+    }
+}
+
+void CodeEditor::showBuffer(const QString &bufferId)
+{
+    visibleBufferId = bufferId;
+    this->setText(buffers[bufferId]);
+}
+
+QStringList CodeEditor::getBufferIds()
+{
+    return buffers.keys();
+}
+
+const QString CodeEditor::getBufferText(const QString &bufferId) const
+{
+    return buffers[bufferId];
 }
 
 void CodeEditor::onTextChanged()
 {
-    pythonCode = QString(this->toPlainText());
-    Q_EMIT codeChanged(pythonCode);
+    if (visibleBufferExists()) {
+        visibleBufferText() = QString(this->toPlainText());
+        if (bufferIsFigure(visibleBufferId)){ //this line is not unit tested
+            Q_EMIT codeChanged(stitchTextForVisibleBuffer());
+        }
+    }
 }
 
 void CodeEditor::initData()
@@ -33,7 +62,6 @@ void CodeEditor::initData()
     // Loading styles
     loadStyle(":/styles/drakula.xml");
 }
-
 
 
 void CodeEditor::loadStyle(QString path)
@@ -54,4 +82,44 @@ void CodeEditor::loadStyle(QString path)
     }
 
     syntax_style = style;
+}
+
+QString& CodeEditor::visibleBufferText()
+{
+    return buffers[visibleBufferId];
+}
+
+bool CodeEditor::visibleBufferExists()
+{
+    return !visibleBufferId.isEmpty();
+}
+
+void CodeEditor::visibleBufferToEmptyId()
+{
+    visibleBufferId = QString();
+}
+
+QString CodeEditor::stitchTextForBuffer(const QString &bufferId)
+{
+    //later move the functionality here to a different class
+    QString finalText;
+    finalText.append(buffers[":pre-python"]);
+    finalText.append("\n");
+    finalText.append(buffers[bufferId]);
+    finalText.append("\n");
+    finalText.append(buffers[":post-python"]);
+    return finalText;
+}
+
+QString CodeEditor::stitchTextForVisibleBuffer()
+{
+    if (visibleBufferExists()) {
+        return stitchTextForBuffer(visibleBufferId);
+    }
+    return QString();
+}
+
+bool CodeEditor::bufferIsFigure(const QString& bufferId)
+{
+    return !bufferId.startsWith(":");
 }

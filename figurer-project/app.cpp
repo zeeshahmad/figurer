@@ -30,6 +30,7 @@ App::~App()
 void App::setMainWindow(MainWindow *mainWindow)
 {
     connect(mainWindow->statusWidget, SIGNAL(cooldownCompleted(QString)),this, SLOT(sendEditorCodeToPython(QString)));
+    connect(mainWindow, SIGNAL(requestLiveEditorCycle(QString)), mainWindow->statusWidget, SLOT(restartCooldown(QString)));
 
     connect(mainWindow, SIGNAL(requestNewProject(QString&,QString&)), projectManager, SLOT(createProjectRequested(QString&,QString&)));
     connect(mainWindow, SIGNAL(requestOpenProject(QString&)), projectManager, SLOT(openProjectRequested(QString&)));
@@ -41,6 +42,7 @@ void App::setMainWindow(MainWindow *mainWindow)
     connect(projectManager, &ProjectManager::projectClosed, mainWindow, [=]() {
         mainWindow->updateEnabledStates(projectManager->isAProjectOpen());
     });
+
     this->mainWindow = mainWindow;
 }
 
@@ -62,6 +64,7 @@ void App::sendFigureToMainWindow(QSharedPointer<QByteArray> figureImageData)
 {
     mainWindow->updateFigureView(figureImageData);
 }
+
 
 void App::importPythonCode()
 {

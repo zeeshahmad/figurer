@@ -13,6 +13,7 @@ set(TEST_FILES
         codeeditor_test.cpp
         pycode_test.cpp
         figureview_test.cpp
+        sectionlist_test.cpp
 )
 
 foreach(testFile ${TEST_FILES})

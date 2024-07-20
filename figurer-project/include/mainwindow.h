@@ -29,6 +29,10 @@ Q_SIGNALS:
     void requestOpenProject(QString&);
     void requestCloseProject();
 
+    void requestLiveEditorCycle(const QString&);
+
+//    void sectionSelected(const QString&);
+
 public Q_SLOTS:
     void updateEnabledStates(bool projectOpen);
     void updateFigureView(QSharedPointer<QByteArray> figureBase64);
@@ -36,6 +40,8 @@ private Q_SLOTS:
     void handleNewBtn();
     void handleOpenBtn();
     void handleCloseBtn();
+
+    void handleCodeEditorChange(const QString&);
 
 private:
 };
