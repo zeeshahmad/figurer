@@ -1,0 +1,3 @@
+wxPython
+cx_Freeze
+rich
