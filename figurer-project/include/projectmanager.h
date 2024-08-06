@@ -7,6 +7,7 @@
 #include "project.h"
 #include "projecttools.h"
 #include <QObject>
+#include "qjsonarray.h"
 
 class ProjectManager : public QObject
 {
@@ -18,7 +19,7 @@ public:
 
 
 Q_SIGNALS:
-    void projectOpened(QString );
+    void projectOpened(QString, QJsonArray );
     void projectClosed();
 
     void error_projectalreadyopen(QString);

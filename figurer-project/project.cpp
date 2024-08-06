@@ -3,52 +3,73 @@
 #include <QDebug>
 #include <QFile>
 #include <QDir>
-#include <QJsonArray>
+#include <QJsonDocument>
 #include <QJsonObject>
 
 
-Project::Project(ProjectTools *tools, ExistingFileParams& params, QObject *parent)
-    : QObject{parent}, projectFilePath{params.projectFilePath},tools{tools}
+Project::Project(ProjectTools *tools, ExistingFileParams& params, pycode::Worker* pw,  QObject *parent)
+    : QObject{parent}, projectFilePath{params.projectFilePath},tools{tools}, PythonUser{pw}
 {
-    tools->io->readFile(params.projectFilePath, jsonData);
-    init();
+    restore();
 }
 
-Project::Project(ProjectTools *tools, NewFileParams& params, QObject *parent)
-    : QObject{parent}, projectFilePath{params.projectFilePath},tools{tools}
+Project::Project(ProjectTools *tools, NewFileParams& params, pycode::Worker* pw, QObject *parent)
+    : QObject{parent}, projectFilePath{params.projectFilePath},tools{tools}, PythonUser{pw}
 {
-    jsonData.insert("externalFilePath", params.externalFilePath);
-    init();
-    tools->io->writeFile(params.projectFilePath, jsonData);
-}
 
-
-void Project::init()
-{
-    QStringList scannedFigList = tools->scanner->scan(getInfo("externalFilePath"));
-    consolidateFigureList(scannedFigList);
-    initJson();
+    init(params.externalFilePath);
+    save();
 }
 
 
-void Project::initJson()
+void Project::init(QString externalFilePath)
 {
-    if (!jsonData["figures"].isArray())
-        jsonData["figures"] = QJsonArray();
+    metadata["externalFilePath"] = externalFilePath;
 }
+
 
 Project::~Project()
 {
 }
 
-QString Project::getInfo(const QString& infoKey)
+void Project::restore()
 {
-    if (jsonData[infoKey].isString())
-        return QString(jsonData[infoKey].toString());
-    else return QString();
+
+    QString pythonCode = tools->io->readFile(projectFilePath);
+    pythonCode += "\nimport inspect\n";
+    pythonCode += "functions = {name: inspect.getsource(obj) for name, obj in globals().items() if callable(obj) and not name.startswith('_')}\n";
+    pythonFunctions.clear();
+
+    QJsonDocument doc = pythonWorker->enqueue(pythonCode, "functions").result().toJsonDocument();
+    QJsonObject obj = doc.object();
+    for (QJsonObject::const_iterator it= obj.begin(); it!=obj.end(); ++it) {
+        QString name = it.key();
+        QJsonValue value = it.value();
+        pythonFunctions.insert(name, value.toString());
+    }
+
+    pythonCode = tools->io->readFile(projectFilePath);
+    doc = pythonWorker->enqueue(pythonCode, "metadata").result().toJsonDocument();
+    metadata = doc.object();
 }
 
+void Project::save()
+{
+    QJsonDocument doc(metadata);
+    QString metadata_str = doc.toJson(QJsonDocument::Compact);
+    QString pythonCode;
+    pythonCode = "import json\n";
+    pythonCode += QString("metadata = json.loads(R\"%1\")\n").arg(metadata_str);
+    for (auto it=pythonFunctions.begin(); it!= pythonFunctions.end(); ++it) {
+        pythonCode += it.value();
+    }
+    tools->io->writeFile(projectFilePath, pythonCode);
+}
 
+// TODO refactor this function to new design
+// instead of this, make rescan external slot that scans for figures
+// not in the pythonFunctions, and maintains a list of keys of pythonFunctions
+// that is in the latex
 void Project::consolidateFigureList(const QList<QString>& updatedFigList)
 {
     QStringList newList = QStringList(updatedFigList);

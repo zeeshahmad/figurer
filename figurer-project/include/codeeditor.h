@@ -20,7 +20,6 @@ public:
     using BufferData = QHash<QString, QString>;
 
     CodeEditor(QWidget *parent = 0);
-    void overwriteBuffers(const BufferData& newData);
     QStringList getBufferIds();
     const QString getBufferText(const QString& bufferId) const;
 
@@ -28,6 +27,7 @@ Q_SIGNALS:
     void codeChanged(const QString&);
 public Q_SLOTS:
     void showBuffer(const QString& bufferId);
+    void overwriteBuffers(const BufferData& newData);
 private Q_SLOTS:
     void onTextChanged();
 private:

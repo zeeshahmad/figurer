@@ -7,11 +7,13 @@
 #include <string>
 #include <QFuture>
 #include <QVariant>
+#include <QJsonDocument>
+#include <QJsonObject>
 
+#include "pybind11/eval.h"
 #include "pybind11/embed.h"
 
 namespace py=pybind11;
-
 namespace pycode {
 
     Worker::Worker(): QThread{nullptr}
@@ -30,17 +32,22 @@ namespace pycode {
 
     void Worker::run()
     {
-        py::scoped_interpreter guard{};
+        py::scoped_interpreter g{};
         qInfo() << "Starting python thread loop";
         while (!isInterruptionRequested()) {
             QMutexLocker loopLocker(&loopMutex);
             bool isThereCode = !queue.isEmpty();
             if (isThereCode) {
                 QSharedPointer<Job> job = queue.takeFirst();
-
                 const std::string rawCode = job->content.toStdString();
                 try {
                     loopLocker.unlock();
+py::exec(R"(1
+for name in dir():
+  if not name.startwith('_'):
+    del globals()[name]
+
+)");
                     py::exec(rawCode);
                     loopLocker.relock();
                     processCodeResult(job);
@@ -101,6 +108,12 @@ namespace pycode {
 
             QByteArray var(data_ptr, data_size);
             addSuccessToPromise(var, &job->promise);
+        } else if (varType == "dict") {
+            py::exec("import json");
+            QString serialised = py::eval(QString("json.dumps(%1)").arg(pythonVarName).toStdString()).cast<std::string>().c_str();
+            QByteArray ba = serialised.toUtf8();
+            QJsonDocument doc = QJsonDocument::fromJson(ba);
+            addSuccessToPromise(doc, &job->promise);
         } else {
             QString err = QString("Could not convert type %1 from python code").arg(varType);
             addErrorToPromise(err, &job->promise);

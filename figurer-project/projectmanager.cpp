@@ -23,7 +23,7 @@ void ProjectManager::createProjectRequested(QString& pathToNewFile, QString& pat
         params.projectFilePath = pathToNewFile;
         params.externalFilePath = pathToExternalFile;
         currentProject = new Project(tools, params);
-        Q_EMIT projectOpened(pathToExternalFile);
+        Q_EMIT projectOpened(pathToExternalFile, currentProject->getFigures());
     }
 }
 
@@ -36,7 +36,7 @@ void ProjectManager::openProjectRequested(QString& openedFilePath)
         Project::ExistingFileParams params;
         params.projectFilePath = openedFilePath;
         currentProject = new Project(tools, params);
-        Q_EMIT projectOpened(currentProject->getInfo("externalFilePath"));
+        Q_EMIT projectOpened(currentProject->getInfo("externalFilePath"), currentProject->getFigures());
     }
 }
 

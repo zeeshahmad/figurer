@@ -13,8 +13,8 @@ class ProjectFileIO: public QObject
 public:
     ProjectFileIO(QObject* parent = nullptr);
 public Q_SLOTS:
-    virtual void readFile(QString filePath, QJsonObject& dataHandle);
-    virtual void writeFile(QString filePath, QJsonObject& dataHandle);
+    virtual QString readFile(QString filePath);
+    virtual void writeFile(QString filePath, const QString& content);
 
 
 Q_SIGNALS:

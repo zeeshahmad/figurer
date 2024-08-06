@@ -9,6 +9,7 @@
 #include <QSharedPointer>
 #include <QFuture>
 #include <QVariant>
+#include <QJsonDocument>
 
 namespace pycode {
 
@@ -20,9 +21,11 @@ namespace pycode {
         Result(const int& data): data(data) {}
         Result(const QString& data): data(data) {}
         Result(const QByteArray& data): data(data) {}
+        Result(const QJsonDocument& data): data(data) {}
         const int toInt() const { return data.toInt(); }
         const QString toString() const { return data.toString(); }
         const QByteArray toByteArray() const { return data.toByteArray(); }
+        const QJsonDocument toJsonDocument() const { return data.toJsonDocument(); }
 
         const bool success() const { return error_=="0"; }
         const QString error() const { return error_; }

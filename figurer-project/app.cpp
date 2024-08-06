@@ -5,6 +5,7 @@
 #include "mainwindow.h"
 #include "projectmanager.h"
 #include "pycode.h"
+#include "ui_mainwindow.h"
 
 
 App::App(int argc, char *argv[])
@@ -36,8 +37,14 @@ void App::setMainWindow(MainWindow *mainWindow)
     connect(mainWindow, SIGNAL(requestOpenProject(QString&)), projectManager, SLOT(openProjectRequested(QString&)));
     connect(mainWindow, SIGNAL(requestCloseProject()), projectManager, SLOT(closeProjectRequested()));
 
-    connect(projectManager, &ProjectManager::projectOpened, mainWindow, [=](QString arg){
+    connect(projectManager, &ProjectManager::projectOpened, mainWindow, [=](QString arg, QJsonArray figures){
         mainWindow->updateEnabledStates(projectManager->isAProjectOpen());
+        QStringList listOfIds;
+        for (const QJsonValue &figure : figures){
+            QString id = figure.toObject()["id"].toString();
+            listOfIds.push_back(id);
+        }
+        mainWindow->ui->sectionList->resetSections(listOfIds);
     });
     connect(projectManager, &ProjectManager::projectClosed, mainWindow, [=]() {
         mainWindow->updateEnabledStates(projectManager->isAProjectOpen());

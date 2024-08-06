@@ -4,10 +4,8 @@
 #include <QFileInfo>
 #include <QDir>
 #include <QDebug>
-#include <QJsonObject>
 #include <QFile>
-#include <QJsonDocument>
-
+#include <QTextStream>
 
 ProjectFileIO::ProjectFileIO(QObject* parent)
     :QObject{parent}
@@ -15,7 +13,7 @@ ProjectFileIO::ProjectFileIO(QObject* parent)
 
 }
 
-void ProjectFileIO::readFile(QString filePath, QJsonObject& dataHandle)
+QString ProjectFileIO::readFile(QString filePath)
 {
     QFile file;
     file.setFileName(filePath);
@@ -24,24 +22,21 @@ void ProjectFileIO::readFile(QString filePath, QJsonObject& dataHandle)
     {
         contents = file.readAll();
         file.close();
+        qInfo() << "Read file: "<< filePath;
     }
-    //could add a validation of json data using a schema
-    dataHandle = QJsonDocument::fromJson(contents.toUtf8()).object();
+    return QString(contents);
 }
 
 
-void ProjectFileIO::writeFile(QString filePath, QJsonObject& dataHandle)
+void ProjectFileIO::writeFile(QString filePath, const QString &content)
 {
-    QJsonDocument document;
-    //again could add validation of data here
-    document.setObject(dataHandle);
-    QByteArray bytes = document.toJson(QJsonDocument::Indented);
     QFile file(filePath);
     if (file.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate)) {
         QTextStream iStream(&file);
         iStream.setEncoding(QStringConverter::Utf8);
-        iStream << bytes;
+        iStream << content;
         file.close();
+        qInfo() << "Write file: "<< filePath;
     }
 }
 

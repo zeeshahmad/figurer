@@ -2,6 +2,7 @@
 #define SECTIONLIST_H
 
 #include <QListWidget>
+#include <QJsonArray>
 
 class SectionList : public QListWidget
 {
