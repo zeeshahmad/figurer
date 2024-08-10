@@ -30,17 +30,29 @@ class MainFrame ( wx.Frame ):
 
         bSizer2 = wx.BoxSizer( wx.HORIZONTAL )
 
+        self.new_button = wx.Button( self, wx.ID_ANY, _(u"New"), wx.DefaultPosition, wx.DefaultSize, 0 )
+        bSizer2.Add( self.new_button, 0, wx.ALL, 5 )
+
         self.open_close_button = wx.Button( self, wx.ID_ANY, _(u"Open"), wx.DefaultPosition, wx.DefaultSize, 0 )
         bSizer2.Add( self.open_close_button, 0, wx.ALL, 5 )
 
-        self.m_button2 = wx.Button( self, wx.ID_ANY, _(u"Save"), wx.DefaultPosition, wx.DefaultSize, 0 )
-        bSizer2.Add( self.m_button2, 0, wx.ALL, 5 )
+        self.save_button = wx.Button( self, wx.ID_ANY, _(u"Save"), wx.DefaultPosition, wx.DefaultSize, 0 )
+        bSizer2.Add( self.save_button, 0, wx.ALL, 5 )
 
-        self.m_button3 = wx.Button( self, wx.ID_ANY, _(u"Rescan TeX"), wx.DefaultPosition, wx.DefaultSize, 0 )
-        bSizer2.Add( self.m_button3, 0, wx.ALL, 5 )
+        self.rescan_button = wx.Button( self, wx.ID_ANY, _(u"Rescan TeX"), wx.DefaultPosition, wx.DefaultSize, 0 )
+        bSizer2.Add( self.rescan_button, 0, wx.ALL, 5 )
 
 
         bSizer1.Add( bSizer2, 0, wx.EXPAND, 5 )
+
+        bSizer81 = wx.BoxSizer( wx.HORIZONTAL )
+
+        self.tabs = wx.Notebook( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, 0 )
+
+        bSizer81.Add( self.tabs, 1, wx.EXPAND |wx.ALL, 5 )
+
+
+        bSizer1.Add( bSizer81, 0, wx.EXPAND, 5 )
 
         bSizer5 = wx.BoxSizer( wx.HORIZONTAL )
 
@@ -50,11 +62,7 @@ class MainFrame ( wx.Frame ):
         self.m_panel1 = wx.Panel( self.m_splitter1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
         bSizer6 = wx.BoxSizer( wx.VERTICAL )
 
-        self.m_notebook3 = wx.Notebook( self.m_panel1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, 0 )
-        self.m_panel4 = wx.Panel( self.m_notebook3, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
-        bSizer8 = wx.BoxSizer( wx.VERTICAL )
-
-        self.m_scintilla1 = wx.stc.StyledTextCtrl( self.m_panel4, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, 0)
+        self.m_scintilla1 = wx.stc.StyledTextCtrl( self.m_panel1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, 0)
         self.m_scintilla1.SetUseTabs ( False )
         self.m_scintilla1.SetTabWidth ( 2 )
         self.m_scintilla1.SetIndent ( 2 )
@@ -90,15 +98,7 @@ class MainFrame ( wx.Frame ):
         self.m_scintilla1.MarkerDefine( wx.stc.STC_MARKNUM_FOLDERTAIL, wx.stc.STC_MARK_EMPTY )
         self.m_scintilla1.SetSelBackground( True, wx.SystemSettings.GetColour(wx.SYS_COLOUR_HIGHLIGHT ) )
         self.m_scintilla1.SetSelForeground( True, wx.SystemSettings.GetColour(wx.SYS_COLOUR_HIGHLIGHTTEXT ) )
-        bSizer8.Add( self.m_scintilla1, 1, wx.EXPAND |wx.ALL, 5 )
-
-
-        self.m_panel4.SetSizer( bSizer8 )
-        self.m_panel4.Layout()
-        bSizer8.Fit( self.m_panel4 )
-        self.m_notebook3.AddPage( self.m_panel4, _(u"Figure 1"), False )
-
-        bSizer6.Add( self.m_notebook3, 1, wx.EXPAND |wx.ALL, 5 )
+        bSizer6.Add( self.m_scintilla1, 1, wx.EXPAND |wx.ALL, 5 )
 
 
         self.m_panel1.SetSizer( bSizer6 )
